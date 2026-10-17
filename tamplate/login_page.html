@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sash Admin - Masuk ke Akun Anda</title>
+<!-- Google Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with forms and container-queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary-fixed-variant": "#3921ca",
+            "on-secondary": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "on-surface": "#121c2c",
+            "primary": "#5242e2",
+            "on-tertiary-fixed": "#3e001d",
+            "on-tertiary-container": "#ffffff",
+            "outline": "#777587",
+            "tertiary-fixed-dim": "#ffb1c7",
+            "on-secondary-fixed": "#00201a",
+            "inverse-surface": "#283042",
+            "surface-container-highest": "#dae2fa",
+            "on-primary": "#ffffff",
+            "primary-fixed-dim": "#c5c0ff",
+            "surface": "#f9f9ff",
+            "background": "#f9f9ff",
+            "on-background": "#121c2c",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-container": "#030026",
+            "inverse-on-surface": "#ecf0ff",
+            "on-secondary-container": "#00705f",
+            "on-secondary-fixed-variant": "#005144",
+            "surface-dim": "#d1daf1",
+            "surface-variant": "#dae2fa",
+            "surface-container": "#e8eeff",
+            "error": "#ba1a1a",
+            "on-error-container": "#93000a",
+            "tertiary-fixed": "#ffd9e2",
+            "primary-container": "#6c5ffc",
+            "error-container": "#ffdad6",
+            "tertiary-container": "#d7347a",
+            "surface-tint": "#5242e2",
+            "outline-variant": "#c8c4d8",
+            "surface-container-low": "#f1f3ff",
+            "surface-container-high": "#dfe8ff",
+            "inverse-primary": "#c5c0ff",
+            "surface-bright": "#f9f9ff",
+            "on-error": "#ffffff",
+            "secondary-fixed-dim": "#57dbc1",
+            "secondary": "#006b5b",
+            "secondary-fixed": "#77f8dd",
+            "on-surface-variant": "#474555",
+            "primary-fixed": "#e3dfff",
+            "on-primary-fixed": "#130067",
+            "secondary-container": "#74f5da",
+            "tertiary": "#b51361",
+            "on-tertiary-fixed-variant": "#8e0049"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "2xl": "1rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xl": "2rem",
+            "space-lg": "1.5rem",
+            "margin": "2rem",
+            "margin-mobile": "1rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "gutter": "1.5rem",
+            "space-md": "1rem",
+            "gutter-mobile": "1rem"
+          },
+          "fontFamily": {
+            "display-mobile": ["Plus Jakarta Sans"],
+            "display": ["Plus Jakarta Sans"],
+            "headline-lg-mobile": ["Plus Jakarta Sans"],
+            "label-lg": ["Inter"],
+            "label-sm": ["Inter"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "body-sm": ["Plus Jakarta Sans"],
+            "label-md": ["Inter"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "display-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+            "display": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-lg-mobile": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "label-sm": ["10px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+            "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .card-shadow {
+      box-shadow: 0px 4px 16px -2px rgba(108, 95, 252, 0.04), 0px 10px 30px -4px rgba(22, 28, 45, 0.08);
+    }
+    .input-focus-ring:focus-within {
+      border-color: #6c5ffc;
+      box-shadow: 0 0 0 3px rgba(108, 95, 252, 0.15);
+    }
+  </style>
+</head>
+<body class="bg-[#f0f3fb] text-on-surface font-body-md min-h-screen flex flex-col justify-between antialiased relative selection:bg-primary-container selection:text-white">
+<!-- Subtle decorative ambient elements -->
+<div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+<div class="absolute -top-[15%] -left-[10%] w-[500px] h-[500px] rounded-full bg-primary/5 blur-3xl"></div>
+<div class="absolute -bottom-[20%] -right-[10%] w-[600px] h-[600px] rounded-full bg-secondary-container/20 blur-3xl"></div>
+</div>
+<!-- Top Minimal Utility Bar -->
+<header class="w-full relative z-10 px-space-xl py-space-md flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-primary font-label-sm font-semibold tracking-wider">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        SASH ENTERPRISE v3.2
+      </span>
+</div>
+<div class="flex items-center gap-space-md">
+<a class="text-on-surface-variant hover:text-primary font-label-md transition-colors duration-150 flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-[18px]">help</span>
+        Bantuan
+      </a>
+<div class="w-px h-4 bg-outline-variant/40"></div>
+<div class="flex items-center gap-1 text-on-surface-variant font-label-md">
+<span class="material-symbols-outlined text-[18px]">language</span>
+<span>ID</span>
+</div>
+</div>
+</header>
+<!-- Main Centered Authentication Canvas -->
+<main class="flex-1 flex items-center justify-center p-space-md sm:p-space-lg relative z-10 my-4">
+<div class="w-full max-w-[480px]">
+<!-- Primary Elevated Authentication Card -->
+<div class="bg-surface-container-lowest rounded-xl card-shadow border border-outline-variant/30 p-8 sm:p-10 transition-all duration-200">
+<!-- Header Branding & Titles -->
+<div class="text-center mb-8">
+<div class="inline-flex justify-center items-center mb-5">
+<img alt="Sash Corporate Identity Logo" class="h-12 w-auto max-w-[170px] object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1VNMOb9SEqXzizOan3X6I6yd1ErB6keC9psPuW1Gvn9yMOEsYnOyWfoPHY0DKrQ-afQlSFT1ymDTGKaOE_939wKc1XqAxzpC_tEaTZSyhbwlDjfOaB0wOghrnbhyQZeB5T_a8ZBKy-YyxcbBlqy9BRucRPoeQ07M47hUbTLtqhF0_kIeDYTfjnd8YeFVfLD02EEKoz6TfV_qMtVzB4FNgilvRdhk5kks4KAbhQkqzdKn8UJ0AWBV2CuAw"/>
+</div>
+<h1 class="text-headline-lg font-headline-lg text-on-surface tracking-tight mb-2">
+            Masuk ke Akun Anda
+          </h1>
+<p class="text-body-md font-body-md text-on-surface-variant max-w-sm mx-auto leading-relaxed">
+            Akses dasbor enterprise Sash dan kelola data operasional Anda
+          </p>
+</div>
+<!-- Authentication Form -->
+<form class="space-y-5" onsubmit="event.preventDefault();">
+<!-- Email / Username Field -->
+<div class="space-y-1.5 text-left">
+<label class="block text-label-md font-label-md text-on-surface font-medium" for="identifier">
+              Email atau Username
+            </label>
+<div class="relative flex items-center rounded-lg border border-outline-variant/60 bg-surface-container-lowest transition-all duration-150 input-focus-ring">
+<div class="pl-3.5 pr-2 pointer-events-none flex items-center text-outline">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+</div>
+<input class="w-full h-[42px] border-0 bg-transparent text-body-md font-body-md text-on-surface placeholder:text-outline/70 focus:ring-0 focus:outline-none pr-3.5 pl-1" id="identifier" name="identifier" placeholder="admin@sash.com" required="" type="text" value="admin@sash.com"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-1.5 text-left">
+<div class="flex items-center justify-between">
+<label class="block text-label-md font-label-md text-on-surface font-medium" for="password">
+                Kata Sandi
+              </label>
+</div>
+<div class="relative flex items-center rounded-lg border border-outline-variant/60 bg-surface-container-lowest transition-all duration-150 input-focus-ring">
+<div class="pl-3.5 pr-2 pointer-events-none flex items-center text-outline">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+</div>
+<input class="w-full h-[42px] border-0 bg-transparent text-body-md font-body-md text-on-surface placeholder:text-outline/70 focus:ring-0 focus:outline-none pr-10 pl-1" id="password" name="password" placeholder="••••••••" required="" type="password" value="secretPassword123"/>
+<button aria-label="Tampilkan atau sembunyikan kata sandi" class="absolute right-0 pr-3.5 flex items-center text-outline hover:text-primary transition-colors duration-150 cursor-pointer" id="togglePassword" type="button">
+<span class="material-symbols-outlined text-[20px]" id="passwordIcon">visibility</span>
+</button>
+</div>
+</div>
+<!-- Utility Controls Row (Remember Me & Forgot Password) -->
+<div class="flex items-center justify-between pt-1 pb-1">
+<label class="flex items-center gap-2 cursor-pointer select-none group">
+<input checked="" class="w-4 h-4 rounded text-primary-container border-outline-variant/80 focus:ring-primary focus:ring-offset-0 transition duration-150 cursor-pointer" id="rememberMe" type="checkbox"/>
+<span class="text-label-md font-label-md text-on-surface-variant group-hover:text-on-surface transition-colors duration-150">
+                Ingat Saya
+              </span>
+</label>
+<a class="text-label-md font-label-md text-[#6c5ffc] hover:underline hover:text-primary font-semibold transition-colors duration-150" href="#">
+              Lupa Kata Sandi?
+            </a>
+</div>
+<!-- Primary Submit Action CTA Button -->
+<button class="w-full h-11 flex items-center justify-center gap-2 rounded-lg bg-primary-container text-white font-label-lg font-semibold shadow-[0_4px_12px_rgba(108,95,252,0.25)] hover:bg-[#5a4bfa] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] transition-all duration-150 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-container" type="submit">
+<span>Masuk ke Dashboard</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</form>
+<!-- Social Authentication Divider -->
+<div class="relative my-7">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-outline-variant/40"></div>
+</div>
+<div class="relative flex justify-center text-xs">
+<span class="bg-surface-container-lowest px-4 text-on-surface-variant font-label-sm uppercase tracking-wider">
+              atau masuk dengan
+            </span>
+</div>
+</div>
+<!-- Social Buttons Grid -->
+<div class="grid grid-cols-2 gap-3.5">
+<!-- Google Auth Button -->
+<button class="flex items-center justify-center gap-2.5 h-[42px] px-4 rounded-lg border border-outline-variant/60 bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-label-md transition-all duration-150 active:scale-[0.98] cursor-pointer" type="button">
+<svg class="w-4 h-4" viewbox="0 0 24 24">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"></path>
+</svg>
+<span class="font-medium">Google</span>
+</button>
+<!-- GitHub Auth Button -->
+<button class="flex items-center justify-center gap-2.5 h-[42px] px-4 rounded-lg border border-outline-variant/60 bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-label-md transition-all duration-150 active:scale-[0.98] cursor-pointer" type="button">
+<svg class="w-4 h-4 fill-current text-[#121c2c]" viewbox="0 0 24 24">
+<path clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" fill-rule="evenodd"></path>
+</svg>
+<span class="font-medium">GitHub</span>
+</button>
+</div>
+<!-- Footer Callout Note -->
+<div class="mt-8 pt-6 border-t border-outline-variant/30 text-center">
+<p class="text-body-sm font-body-sm text-on-surface-variant">
+            Belum memiliki akun? 
+            <a class="font-semibold text-primary hover:text-primary-container transition-colors duration-150" href="#">
+              Hubungi Administrator Sistem
+            </a>
+</p>
+</div>
+</div>
+<!-- Security / ISO Assurance Micro-badge -->
+<div class="mt-6 flex items-center justify-center gap-2 text-outline text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[16px] text-secondary">verified_user</span>
+<span>Enkripsi End-to-End SSL 256-bit Terproteksi</span>
+</div>
+</div>
+</main>
+<!-- Global Legal / Corporate Footer -->
+<footer class="w-full relative z-10 py-space-md text-center">
+<div class="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-6 text-on-surface-variant font-label-sm text-xs">
+<span>© 2024 Sash Enterprise Inc. Seluruh hak cipta dilindungi.</span>
+<div class="hidden sm:block w-1 h-1 rounded-full bg-outline-variant"></div>
+<div class="flex items-center gap-4">
+<a class="hover:text-primary transition-colors duration-150" href="#">Kebijakan Privasi</a>
+<a class="hover:text-primary transition-colors duration-150" href="#">Ketentuan Layanan</a>
+<a class="hover:text-primary transition-colors duration-150" href="#">Pusat Keamanan</a>
+</div>
+</div>
+</footer>
+<!-- Interactive JavaScript for Password Visibility -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const togglePasswordBtn = document.getElementById('togglePassword');
+      const passwordInput = document.getElementById('password');
+      const passwordIcon = document.getElementById('passwordIcon');
+
+      if (togglePasswordBtn && passwordInput && passwordIcon) {
+        togglePasswordBtn.addEventListener('click', () => {
+          const isPassword = passwordInput.getAttribute('type') === 'password';
+          passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+          passwordIcon.textContent = isPassword ? 'visibility_off' : 'visibility';
+        });
+      }
+    });
+  </script>
+</body></html>
