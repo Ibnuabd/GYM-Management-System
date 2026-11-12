@@ -41,6 +41,23 @@ php artisan boost:install
 
 Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
 
+## Testing
+
+Tests run against a dedicated database (`gym_management_system_test`), never against your development database. Create it once:
+
+```bash
+mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS gym_management_system_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+```
+
+Then migrate and run the suite:
+
+```bash
+php artisan migrate --env=testing
+php artisan test
+```
+
+`RefreshDatabase` keeps the test schema up to date and wraps every test in a transaction, so development data stays untouched. As an extra safety net, `tests/TestCase.php` stops the run with a clear error if `DB_DATABASE` does not end with `_test`.
+
 ## Contributing
 
 Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
