@@ -136,6 +136,19 @@ class Member extends Authenticatable
     }
 
     /**
+     * Pesan untuk member yang tidak boleh memakai portal karena statusnya bukan "active".
+     * Dipakai saat login portal dan oleh middleware EnsureMemberIsActive.
+     */
+    public static function portalAccessDeniedMessage(string $status): string
+    {
+        if ($status === 'suspended') {
+            return 'Akun keanggotaan Anda sedang ditangguhkan. Silakan hubungi Customer Service kami.';
+        }
+
+        return 'Akun keanggotaan Anda sedang tidak aktif. Silakan hubungi Customer Service kami.';
+    }
+
+    /**
      * Generate a unique sequential member code.
      */
     public static function generateMemberCode(): string

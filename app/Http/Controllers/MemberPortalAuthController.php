@@ -83,9 +83,11 @@ class MemberPortalAuthController extends Controller
         // Langkah 3: password benar, hitungan gagal di-reset ke 0.
         RateLimiter::clear($throttleKey);
 
-        if ($member->status === 'suspended') {
+        // Hanya member berstatus "active" yang boleh masuk portal
+        // (aturan yang sama dicek ulang di setiap halaman oleh middleware EnsureMemberIsActive).
+        if ($member->status !== 'active') {
             throw ValidationException::withMessages([
-                'login' => __('Akun keanggotaan Anda sedang ditangguhkan. Silakan hubungi Customer Service kami.'),
+                'login' => Member::portalAccessDeniedMessage($member->status),
             ]);
         }
 
@@ -97,13 +99,23 @@ class MemberPortalAuthController extends Controller
 
     /**
      * Destroy an authenticated member portal session.
+     *
+     * Staf dan member memakai sesi (session) browser yang sama, tapi "guard" yang berbeda.
+     * Jika di browser ini staf juga sedang login, kita HANYA mengeluarkan akun member,
+     * supaya staf tidak ikut ter-logout.
      */
     public function logout(Request $request): RedirectResponse
     {
         Auth::guard('member')->logout();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        if (Auth::guard('web')->check()) {
+            // Staf masih login: cukup ganti ID sesi (mencegah session fixation), data staf tetap ada.
+            $request->session()->regenerate();
+        } else {
+            // Tidak ada staf yang login: hapus seluruh sesi seperti biasa.
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
 
         return redirect()->route('portal.login');
     }

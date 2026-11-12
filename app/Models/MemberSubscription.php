@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Database\Factories\MemberSubscriptionFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -94,6 +95,20 @@ class MemberSubscription extends Model
     public function ptSessionLogs(): HasMany
     {
         return $this->hasMany(PtSessionLog::class, 'member_subscription_id')->orderByDesc('session_date');
+    }
+
+    /**
+     * Hanya langganan yang dihitung sebagai PENDAPATAN (semua status kecuali "cancelled").
+     *
+     * Langganan yang dibatalkan dianggap tidak menghasilkan uang, jadi tidak ikut laporan.
+     * Pemakaian: MemberSubscription::countedAsRevenue()->sum('price_paid')
+     *
+     * @param  Builder<MemberSubscription>  $query
+     * @return Builder<MemberSubscription>
+     */
+    public function scopeCountedAsRevenue(Builder $query): Builder
+    {
+        return $query->where('status', '!=', 'cancelled');
     }
 
     /**

@@ -36,6 +36,7 @@ export function route(name, params = null) {
         'members.destroy': '/members/{id}',
         'members.quick-search': '/members/quick-search',
         'members.check-rfid': '/members/check-rfid',
+        'members.portal-password.update': '/members/{id}/portal-password',
         'packages.index': '/packages',
         'packages.store': '/packages',
         'packages.update': '/packages/{id}',

@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberPortalAuthController;
 use App\Http\Controllers\MemberPortalController;
+use App\Http\Controllers\MemberPortalPasswordController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\PersonalTrainerController;
 use App\Http\Controllers\PosController;
@@ -41,6 +42,9 @@ Route::middleware('auth:web')->group(function () {
         Route::get('/members/{member}/edit', [MemberController::class, 'edit'])->name('members.edit');
         Route::put('/members/{member}', [MemberController::class, 'update'])->name('members.update');
         Route::delete('/members/{member}', [MemberController::class, 'destroy'])->name('members.destroy');
+
+        // Staf mengatur / mereset password portal member
+        Route::put('/members/{member}/portal-password', [MemberPortalPasswordController::class, 'update'])->name('members.portal-password.update');
 
         // Packages: CS boleh MELIHAT daftar paket
         Route::get('/packages', [PackageController::class, 'index'])->name('packages.index');
@@ -113,7 +117,12 @@ Route::prefix('portal')->group(function () {
 
 // Member Self-Service Portal Authenticated Routes (Strict Read-Only)
 Route::middleware('auth:member')->prefix('portal')->group(function () {
+    // Logout tetap boleh walaupun status member sudah tidak aktif.
     Route::post('/logout', [MemberPortalAuthController::class, 'logout'])->name('portal.logout');
+});
+
+// Halaman portal: hanya untuk member yang statusnya "active"
+Route::middleware(['auth:member', 'member.active'])->prefix('portal')->group(function () {
     Route::get('/', [MemberPortalController::class, 'index'])->name('portal.dashboard');
     Route::get('/card', [MemberPortalController::class, 'digitalCard'])->name('portal.card');
     Route::get('/pt-progress', [MemberPortalController::class, 'ptProgress'])->name('portal.pt-progress');

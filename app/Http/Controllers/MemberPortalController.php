@@ -56,60 +56,13 @@ class MemberPortalController extends Controller
         // 2. Personal Trainer Package Progress
         $ptSubscriptions = $member->subscriptions
             ->filter(fn (MemberSubscription $sub) => $sub->total_sessions > 0)
-            ->map(function (MemberSubscription $sub) {
-                $used = (int) $sub->used_sessions;
-                $total = (int) $sub->total_sessions;
-                $remaining = max(0, $total - $used);
-                $percent = $total > 0 ? (int) round(($used / $total) * 100) : 0;
-                $endCarbon = $sub->end_date ? Carbon::parse($sub->end_date) : null;
-                $remainingDays = $endCarbon ? max(0, Carbon::today()->diffInDays($endCarbon, false)) : 0;
-
-                $trainerName = $sub->personalTrainer?->name ?? 'Belum Ditugaskan';
-                $words = explode(' ', $trainerName);
-                $initials = count($words) >= 2
-                    ? strtoupper(substr($words[0], 0, 1).substr($words[1], 0, 1))
-                    : strtoupper(substr($trainerName, 0, 2));
-
-                return [
-                    'id' => $sub->id,
-                    'package_name' => $sub->package?->name ?? 'Paket Personal Trainer',
-                    'trainer_name' => $trainerName,
-                    'trainer_initials' => $initials,
-                    'total_sessions' => $total,
-                    'used_sessions' => $used,
-                    'remaining_sessions' => $remaining,
-                    'progress_percent' => $percent,
-                    'start_date' => Carbon::parse($sub->start_date)->translatedFormat('d M Y'),
-                    'end_date' => $endCarbon?->translatedFormat('d M Y'),
-                    'remaining_days' => $remainingDays,
-                    'status' => $sub->status,
-                    'is_exhausted' => $remaining === 0,
-                    'is_expired' => $endCarbon && $endCarbon < Carbon::today(),
-                ];
-            })
+            ->map(fn (MemberSubscription $sub) => $this->formatPtSubscription($sub))
             ->values();
 
         // 3. Chronological Workout History from PT Session Logs
-        $workoutHistory = $member->ptSessionLogs->map(function (PtSessionLog $log) {
-            $trainerName = $log->trainer?->name ?? 'Personal Trainer';
-            $words = explode(' ', $trainerName);
-            $initials = count($words) >= 2
-                ? strtoupper(substr($words[0], 0, 1).substr($words[1], 0, 1))
-                : strtoupper(substr($trainerName, 0, 2));
-
-            return [
-                'id' => $log->id,
-                'session_date' => $log->session_date->toIso8601String(),
-                'date_formatted' => $log->session_date->translatedFormat('d M Y, H:i'),
-                'time_ago' => $log->session_date->diffForHumans(),
-                'duration_minutes' => $log->duration_minutes,
-                'muscle_focus' => $log->muscle_focus,
-                'workout_notes' => $log->workout_notes,
-                'member_feedback' => $log->member_feedback,
-                'trainer_name' => $trainerName,
-                'trainer_initials' => $initials,
-            ];
-        })->values();
+        $workoutHistory = $member->ptSessionLogs
+            ->map(fn (PtSessionLog $log) => $this->formatWorkoutLog($log))
+            ->values();
 
         // 4. Gate Access Attendance History
         $recentAttendances = $member->attendances->map(function ($att) {
@@ -175,7 +128,10 @@ class MemberPortalController extends Controller
         $ptSubs = $member->subscriptions()
             ->where('total_sessions', '>', 0)
             ->with(['package', 'personalTrainer'])
-            ->get();
+            ->get()
+            // Kirim HANYA field untuk member (tanpa catatan internal staf, harga, atau email trainer).
+            ->map(fn (MemberSubscription $sub) => $this->formatPtSubscription($sub))
+            ->values();
 
         return response()->json($ptSubs);
     }
@@ -190,8 +146,82 @@ class MemberPortalController extends Controller
 
         $logs = $member->ptSessionLogs()
             ->with('trainer')
-            ->get();
+            ->get()
+            // Kirim HANYA field untuk member (tanpa data akun trainer seperti email).
+            ->map(fn (PtSessionLog $log) => $this->formatWorkoutLog($log))
+            ->values();
 
         return response()->json($logs);
+    }
+
+    /**
+     * Data paket PT yang BOLEH dilihat member.
+     *
+     * Sengaja ditulis satu per satu (bukan mengirim model utuh), supaya data internal
+     * seperti "notes" (catatan staf), "price_paid", dan email trainer tidak ikut terkirim.
+     *
+     * @return array<string, mixed>
+     */
+    private function formatPtSubscription(MemberSubscription $sub): array
+    {
+        $used = (int) $sub->used_sessions;
+        $total = (int) $sub->total_sessions;
+        $remaining = max(0, $total - $used);
+        $endDate = $sub->end_date ? Carbon::parse($sub->end_date) : null;
+        $trainerName = $sub->personalTrainer?->name ?? 'Belum Ditugaskan';
+
+        return [
+            'id' => $sub->id,
+            'package_name' => $sub->package?->name ?? 'Paket Personal Trainer',
+            'trainer_name' => $trainerName,
+            'trainer_initials' => $this->initialsOf($trainerName),
+            'total_sessions' => $total,
+            'used_sessions' => $used,
+            'remaining_sessions' => $remaining,
+            'progress_percent' => $total > 0 ? (int) round(($used / $total) * 100) : 0,
+            'start_date' => Carbon::parse($sub->start_date)->translatedFormat('d M Y'),
+            'end_date' => $endDate?->translatedFormat('d M Y'),
+            'remaining_days' => $endDate ? max(0, (int) Carbon::today()->diffInDays($endDate, false)) : 0,
+            'status' => $sub->status,
+            'is_exhausted' => $remaining === 0,
+            'is_expired' => $endDate !== null && $endDate < Carbon::today(),
+        ];
+    }
+
+    /**
+     * Data satu sesi latihan PT yang BOLEH dilihat member.
+     *
+     * @return array<string, mixed>
+     */
+    private function formatWorkoutLog(PtSessionLog $log): array
+    {
+        $trainerName = $log->trainer?->name ?? 'Personal Trainer';
+
+        return [
+            'id' => $log->id,
+            'session_date' => $log->session_date->toIso8601String(),
+            'date_formatted' => $log->session_date->translatedFormat('d M Y, H:i'),
+            'time_ago' => $log->session_date->diffForHumans(),
+            'duration_minutes' => $log->duration_minutes,
+            'muscle_focus' => $log->muscle_focus,
+            'workout_notes' => $log->workout_notes,
+            'member_feedback' => $log->member_feedback,
+            'trainer_name' => $trainerName,
+            'trainer_initials' => $this->initialsOf($trainerName),
+        ];
+    }
+
+    /**
+     * Inisial dari nama, contoh: "Coach Dimas" -> "CD", "Dimas" -> "DI".
+     */
+    private function initialsOf(string $name): string
+    {
+        $words = explode(' ', trim($name));
+
+        if (count($words) >= 2) {
+            return strtoupper(substr($words[0], 0, 1).substr($words[1], 0, 1));
+        }
+
+        return strtoupper(substr($name, 0, 2));
     }
 }

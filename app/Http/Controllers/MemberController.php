@@ -151,6 +151,8 @@ class MemberController extends Controller
             'packages' => $packages,
             'personalTrainers' => $personalTrainers,
             'suggestedQueueDate' => $suggestedQueueDate,
+            // Hanya kirim "sudah punya password atau belum", JANGAN kirim password-nya.
+            'hasPortalPassword' => filled($member->password),
         ]);
     }
 

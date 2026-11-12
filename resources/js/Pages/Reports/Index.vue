@@ -1,7 +1,15 @@
 <template>
   <AuthenticatedLayout>
     <div class="space-y-6">
-      
+
+      <!-- Pesan error filter (dari App\Http\Requests\ReportFilterRequest), misal tanggal tidak valid -->
+      <div
+        v-if="Object.keys($page.props.errors || {}).length > 0"
+        class="p-3 rounded-xl bg-[#ba1a1a]/10 border border-[#ba1a1a]/30 text-[#ba1a1a] text-xs font-semibold space-y-0.5"
+      >
+        <p v-for="(message, field) in $page.props.errors" :key="field">{{ message }}</p>
+      </div>
+
       <!-- ==================== PAGE HEADER & EXPORT ACTIONS ==================== -->
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ReportFilterRequest;
 use App\Models\Attendance;
 use App\Models\Member;
 use App\Models\MemberSubscription;
@@ -10,7 +11,6 @@ use App\Models\PtSessionLog;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Support\Collection;
 use Inertia\Inertia;
@@ -29,7 +29,7 @@ class ReportController extends Controller
     /**
      * Display the operational analytics and financial reporting dashboard.
      */
-    public function index(Request $request): Response
+    public function index(ReportFilterRequest $request): Response
     {
         $filters = $this->resolveFilters($request);
         $data = $this->aggregateReportData($filters['start_date'], $filters['end_date'], $filters['category']);
@@ -48,7 +48,7 @@ class ReportController extends Controller
     /**
      * Export filtered financial and transaction report to PDF format using DomPDF.
      */
-    public function exportPdf(Request $request): HttpResponse
+    public function exportPdf(ReportFilterRequest $request): HttpResponse
     {
         $filters = $this->resolveFilters($request);
         $data = $this->aggregateReportData($filters['start_date'], $filters['end_date'], $filters['category']);
@@ -73,7 +73,7 @@ class ReportController extends Controller
     /**
      * Export filtered transaction logs and financial audit breakdown to Excel (.xlsx) format.
      */
-    public function exportExcel(Request $request): StreamedResponse
+    public function exportExcel(ReportFilterRequest $request): StreamedResponse
     {
         $filters = $this->resolveFilters($request);
         $data = $this->aggregateReportData($filters['start_date'], $filters['end_date'], $filters['category']);
@@ -214,7 +214,7 @@ class ReportController extends Controller
      *
      * @return array{start_date: Carbon, end_date: Carbon, category: string, interval: string}
      */
-    protected function resolveFilters(Request $request): array
+    protected function resolveFilters(ReportFilterRequest $request): array
     {
         $interval = $request->query('interval', 'month');
         $now = Carbon::now();
@@ -275,18 +275,18 @@ class ReportController extends Controller
         $totalGender = max(1, $maleMembers + $femaleMembers);
 
         // 3. Multi-channel Revenue Calculation
-        $subscriptionQuery = MemberSubscription::whereBetween('created_at', [$startDate, $endDate])
+        $subscriptionQuery = MemberSubscription::countedAsRevenue()->whereBetween('created_at', [$startDate, $endDate])
             ->with(['package', 'member']);
 
-        $gymRevenue = (float) MemberSubscription::whereBetween('created_at', [$startDate, $endDate])
+        $gymRevenue = (float) MemberSubscription::countedAsRevenue()->whereBetween('created_at', [$startDate, $endDate])
             ->whereHas('package', fn ($q) => $q->where('type', 'gym'))
             ->sum('price_paid');
 
-        $ptRevenue = (float) MemberSubscription::whereBetween('created_at', [$startDate, $endDate])
+        $ptRevenue = (float) MemberSubscription::countedAsRevenue()->whereBetween('created_at', [$startDate, $endDate])
             ->whereHas('package', fn ($q) => $q->where('type', 'pt'))
             ->sum('price_paid');
 
-        $comboRevenue = (float) MemberSubscription::whereBetween('created_at', [$startDate, $endDate])
+        $comboRevenue = (float) MemberSubscription::countedAsRevenue()->whereBetween('created_at', [$startDate, $endDate])
             ->whereHas('package', fn ($q) => $q->where('type', 'combo'))
             ->sum('price_paid');
 
@@ -376,11 +376,11 @@ class ReportController extends Controller
             $dayStart = $date->copy()->startOfDay();
             $dayEnd = $date->copy()->endOfDay();
 
-            $dayGym = (float) MemberSubscription::whereBetween('created_at', [$dayStart, $dayEnd])
+            $dayGym = (float) MemberSubscription::countedAsRevenue()->whereBetween('created_at', [$dayStart, $dayEnd])
                 ->whereHas('package', fn ($q) => $q->where('type', 'gym'))
                 ->sum('price_paid');
 
-            $dayPt = (float) MemberSubscription::whereBetween('created_at', [$dayStart, $dayEnd])
+            $dayPt = (float) MemberSubscription::countedAsRevenue()->whereBetween('created_at', [$dayStart, $dayEnd])
                 ->whereHas('package', fn ($q) => $q->whereIn('type', ['pt', 'combo']))
                 ->sum('price_paid');
 

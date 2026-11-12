@@ -325,6 +325,62 @@
       </div>
     </section>
 
+    <!-- ==================== AKSES PORTAL MEMBER (ATUR PASSWORD) ==================== -->
+    <section class="bg-white rounded-2xl border border-[#c8c4d8]/40 shadow-xs p-5 mt-6">
+      <div class="flex flex-col md:flex-row md:items-start gap-5">
+        <div class="md:w-1/3">
+          <h2 class="text-sm font-bold text-[#121c2c] flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px] text-[#5242e2]">lock_person</span>
+            Akses Portal Member
+          </h2>
+          <p class="text-xs text-[#777587] mt-1">
+            Member login di <strong>/portal/login</strong> memakai email, nomor HP, atau kode member + password ini.
+          </p>
+          <span
+            class="inline-block mt-2 px-2 py-0.5 rounded-md text-[10px] font-bold"
+            :class="hasPortalPassword ? 'bg-[#09ad95]/10 text-[#09ad95]' : 'bg-amber-100 text-amber-700'"
+          >
+            {{ hasPortalPassword ? 'Password sudah diatur' : 'Belum punya password portal' }}
+          </span>
+        </div>
+
+        <form @submit.prevent="submitPortalPassword" class="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3 items-start">
+          <div>
+            <label class="block text-[11px] font-semibold text-[#474555] mb-1">Password Baru</label>
+            <input
+              v-model="portalPasswordForm.password"
+              type="password"
+              autocomplete="new-password"
+              placeholder="Minimal 8 karakter"
+              class="w-full h-9 px-3 rounded-xl border border-[#c8c4d8]/60 text-xs outline-none focus:border-[#6c5ffc]"
+            />
+            <span v-if="portalPasswordForm.errors.password" class="text-[11px] text-[#ba1a1a] mt-1 block">
+              {{ portalPasswordForm.errors.password }}
+            </span>
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-[#474555] mb-1">Ulangi Password</label>
+            <input
+              v-model="portalPasswordForm.password_confirmation"
+              type="password"
+              autocomplete="new-password"
+              placeholder="Ketik ulang password"
+              class="w-full h-9 px-3 rounded-xl border border-[#c8c4d8]/60 text-xs outline-none focus:border-[#6c5ffc]"
+            />
+          </div>
+          <div class="sm:pt-[18px]">
+            <button
+              type="submit"
+              :disabled="portalPasswordForm.processing"
+              class="w-full h-9 rounded-xl bg-[#6c5ffc] hover:bg-[#5242e2] text-white text-xs font-bold disabled:opacity-50"
+            >
+              {{ hasPortalPassword ? 'Reset Password' : 'Simpan Password' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
     <!-- ==================== MODAL: TAMBAH PAKET LANGGANAN ==================== -->
     <div 
       v-if="showAddSubModal"
@@ -501,7 +557,23 @@ const props = defineProps({
   packages: Array,
   personalTrainers: Array,
   suggestedQueueDate: String,
+  // true jika member sudah punya password portal (password-nya sendiri tidak dikirim)
+  hasPortalPassword: Boolean,
 });
+
+// Form atur / reset password portal member
+const portalPasswordForm = useForm({
+  password: '',
+  password_confirmation: '',
+});
+
+const submitPortalPassword = () => {
+  portalPasswordForm.put(route('members.portal-password.update', props.member.id), {
+    preserveScroll: true,
+    // Kosongkan kolom password setelah berhasil disimpan
+    onSuccess: () => portalPasswordForm.reset(),
+  });
+};
 
 const showAddSubModal = ref(false);
 

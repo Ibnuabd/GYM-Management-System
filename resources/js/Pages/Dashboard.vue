@@ -1,6 +1,6 @@
 <template>
   <AuthenticatedLayout>
-    
+
     <!-- ==================== ROW 0: PAGE HEADER & ACTION ==================== -->
     <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
@@ -17,23 +17,24 @@
       <div class="flex items-center gap-3">
         <div class="flex items-center gap-2 bg-white px-3 py-2 rounded-xl border border-[#c8c4d8]/40 shadow-sm text-[#474555] text-xs font-semibold">
           <span class="material-symbols-outlined text-[18px] text-[#5242e2]">calendar_today</span>
-          <span>17 Oktober 2026 (Hari Ini)</span>
+          <span>{{ todayLabel }} (Hari Ini)</span>
         </div>
-        <button 
-          @click="exportAlert"
+        <Link
+          v-if="canViewFinancials"
+          :href="route('reports')"
           class="flex items-center gap-1.5 bg-[#6c5ffc] hover:bg-[#5242e2] text-white px-4 py-2 rounded-xl text-xs font-bold transition-all duration-150 shadow-sm shadow-[#6c5ffc]/20 active:scale-95"
         >
           <span class="material-symbols-outlined text-[18px]">file_download</span>
           <span>Ekspor Laporan</span>
-        </button>
+        </Link>
       </div>
     </section>
 
     <!-- ==================== ROW 1: TOP METRIC CARDS (SPARKLINES) ==================== -->
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      
-      <!-- Card 1: Total Pendapatan -->
-      <div class="bg-white rounded-xl p-5 border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] hover:shadow-[0px_10px_24px_-4px_rgba(108,95,252,0.08)] transition-all duration-200">
+
+      <!-- Card 1: Total Pendapatan (hanya untuk permission view_reports) -->
+      <div v-if="canViewFinancials" class="bg-white rounded-xl p-5 border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] hover:shadow-[0px_10px_24px_-4px_rgba(108,95,252,0.08)] transition-all duration-200">
         <div class="flex items-center justify-between mb-2.5">
           <span class="text-xs font-semibold text-[#474555]">Total Pendapatan (Bln Ini)</span>
           <div class="w-9 h-9 rounded-xl bg-[#5242e2]/10 text-[#5242e2] flex items-center justify-center">
@@ -41,11 +42,8 @@
           </div>
         </div>
         <div class="flex items-baseline justify-between mb-1.5">
-          <span class="text-2xl font-bold text-[#121c2c] tnum">{{ metrics.total_revenue }}</span>
-          <span class="inline-flex items-center gap-0.5 text-[10px] font-bold text-[#09ad95] bg-[#09ad95]/10 px-2 py-0.5 rounded-full">
-            <span class="material-symbols-outlined text-[13px]">trending_up</span>
-            {{ metrics.revenue_growth }}
-          </span>
+          <span class="text-2xl font-bold text-[#121c2c] tnum">{{ formatRupiah(metrics.total_revenue) }}</span>
+          <span class="text-[10px] font-bold text-[#5242e2] bg-[#5242e2]/10 px-2 py-0.5 rounded-full">Bulan ini</span>
         </div>
         <div class="pt-2">
           <svg class="w-full h-8" fill="none" viewBox="0 0 100 24">
@@ -72,10 +70,7 @@
         </div>
         <div class="flex items-baseline justify-between mb-1.5">
           <span class="text-2xl font-bold text-[#121c2c] tnum">{{ metrics.active_members.toLocaleString('id-ID') }}</span>
-          <span class="inline-flex items-center gap-0.5 text-[10px] font-bold text-[#09ad95] bg-[#09ad95]/10 px-2 py-0.5 rounded-full">
-            <span class="material-symbols-outlined text-[13px]">trending_up</span>
-            {{ metrics.members_growth }}
-          </span>
+          <span class="text-[10px] font-bold text-[#09ad95] bg-[#09ad95]/10 px-2 py-0.5 rounded-full">Paket aktif</span>
         </div>
         <div class="pt-2">
           <svg class="w-full h-8" fill="none" viewBox="0 0 100 24">
@@ -88,7 +83,7 @@
             <path d="M0,16 Q20,6 40,12 T70,4 T100,2" fill="none" stroke="#09ad95" stroke-linecap="round" stroke-width="2.5"></path>
             <path d="M0,16 Q20,6 40,12 T70,4 T100,2 L100,24 L0,24 Z" fill="url(#grad2)"></path>
           </svg>
-          <p class="text-[11px] text-[#777587] mt-1">42 member baru bergabung minggu ini</p>
+          <p class="text-[11px] text-[#777587] mt-1">{{ metrics.new_members_this_week }} member baru terdaftar 7 hari terakhir</p>
         </div>
       </div>
 
@@ -104,12 +99,12 @@
         <div class="flex items-baseline justify-between mb-1.5">
           <span class="text-2xl font-bold text-[#121c2c] tnum">{{ metrics.in_gym_count }} <span class="text-xs text-[#777587] font-normal">/ {{ metrics.gym_capacity }} Kapasitas</span></span>
           <span class="inline-flex items-center text-[10px] font-bold text-[#03c892] bg-[#03c892]/10 px-2 py-0.5 rounded-full">
-            {{ Math.round((metrics.in_gym_count / metrics.gym_capacity) * 100) }}% Terisi
+            {{ occupancyPercent }}% Terisi
           </span>
         </div>
         <div class="pt-2">
           <div class="w-full bg-[#e8eeff] rounded-full h-2.5 overflow-hidden">
-            <div class="bg-gradient-to-r from-[#03c892] to-[#09ad95] h-2.5 rounded-full" :style="{ width: `${(metrics.in_gym_count / metrics.gym_capacity) * 100}%` }"></div>
+            <div class="bg-gradient-to-r from-[#03c892] to-[#09ad95] h-2.5 rounded-full" :style="{ width: `${occupancyPercent}%` }"></div>
           </div>
           <p class="text-[11px] text-[#777587] mt-2">Berdasarkan pemindaian RFID gerbang</p>
         </div>
@@ -125,10 +120,7 @@
         </div>
         <div class="flex items-baseline justify-between mb-1.5">
           <span class="text-2xl font-bold text-[#121c2c] tnum">{{ metrics.completed_pt_sessions }} <span class="text-xs text-[#777587] font-normal">Sesi</span></span>
-          <span class="inline-flex items-center gap-0.5 text-[10px] font-bold text-[#09ad95] bg-[#09ad95]/10 px-2 py-0.5 rounded-full">
-            <span class="material-symbols-outlined text-[13px]">trending_up</span>
-            {{ metrics.pt_sessions_growth }}
-          </span>
+          <span class="text-[10px] font-bold text-[#b58004] bg-[#f7b924]/15 px-2 py-0.5 rounded-full">Bulan ini</span>
         </div>
         <div class="pt-2">
           <svg class="w-full h-8" fill="none" viewBox="0 0 100 24">
@@ -141,7 +133,7 @@
             <path d="M0,14 Q25,4 50,18 T75,8 T100,2" fill="none" stroke="#f7b924" stroke-linecap="round" stroke-width="2.5"></path>
             <path d="M0,14 Q25,4 50,18 T75,8 T100,2 L100,24 L0,24 Z" fill="url(#grad4)"></path>
           </svg>
-          <p class="text-[11px] text-[#777587] mt-1">0% selisih kuota (Zero session leakage)</p>
+          <p class="text-[11px] text-[#777587] mt-1">Sesi PT yang tercatat bulan ini</p>
         </div>
       </div>
 
@@ -149,13 +141,13 @@
 
     <!-- ==================== ROW 2: SOLID STAT CARDS ==================== -->
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      
+
       <!-- Solid Violet: Check-in Hari Ini -->
       <div class="rounded-xl p-5 bg-[#6c5ffc] text-white shadow-md relative overflow-hidden flex items-center justify-between">
         <div class="relative z-10">
           <p class="text-white/80 text-xs font-semibold uppercase tracking-wider mb-1">Check-in Hari Ini</p>
           <h3 class="text-3xl font-extrabold text-white leading-none mb-1 tnum">{{ metrics.today_checkins }}</h3>
-          <span class="text-[11px] text-white/70">Puncak: 17:00 - 19:30</span>
+          <span class="text-[11px] text-white/70">{{ metrics.today_checkouts }} check-out hari ini</span>
         </div>
         <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center relative z-10">
           <span class="material-symbols-outlined text-[26px] text-white">fingerprint</span>
@@ -163,11 +155,11 @@
         <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
       </div>
 
-      <!-- Solid Teal: Kasir Ritel -->
-      <div class="rounded-xl p-5 bg-[#09ad95] text-white shadow-md relative overflow-hidden flex items-center justify-between">
+      <!-- Solid Teal: Kasir Ritel (hanya untuk permission view_reports) -->
+      <div v-if="canViewFinancials" class="rounded-xl p-5 bg-[#09ad95] text-white shadow-md relative overflow-hidden flex items-center justify-between">
         <div class="relative z-10">
           <p class="text-white/80 text-xs font-semibold uppercase tracking-wider mb-1">Kasir Ritel Hari Ini</p>
-          <h3 class="text-2xl font-extrabold text-white leading-none mb-1 tnum">{{ metrics.pos_sales_today }}</h3>
+          <h3 class="text-2xl font-extrabold text-white leading-none mb-1 tnum">{{ formatRupiah(metrics.pos_sales_today) }}</h3>
           <span class="text-[11px] text-white/70">{{ metrics.pos_transactions_today }} transaksi ritel</span>
         </div>
         <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center relative z-10">
@@ -181,7 +173,7 @@
         <div class="relative z-10">
           <p class="text-white/80 text-xs font-semibold uppercase tracking-wider mb-1">Kuota Sesi PT Aktif</p>
           <h3 class="text-3xl font-extrabold text-white leading-none mb-1 tnum">{{ metrics.active_pt_quota }} <span class="text-sm font-normal">Sesi</span></h3>
-          <span class="text-[11px] text-white/70">Menunggu penjadwalan</span>
+          <span class="text-[11px] text-white/70">Sisa sesi di paket PT aktif</span>
         </div>
         <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center relative z-10">
           <span class="material-symbols-outlined text-[26px] text-white">event_available</span>
@@ -206,9 +198,9 @@
 
     <!-- ==================== ROW 3: VISUAL METRICS & WORKLOAD ==================== -->
     <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      
-      <!-- Chart Bar Pendapatan Bulanan (6 cols) -->
-      <div class="lg:col-span-6 bg-white rounded-xl p-5 border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] flex flex-col justify-between">
+
+      <!-- Chart Bar Pendapatan Bulanan (6 cols, hanya untuk permission view_reports) -->
+      <div v-if="canViewFinancials" class="lg:col-span-6 bg-white rounded-xl p-5 border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between pb-3 border-b border-[#e9edf4] mb-4">
             <div>
@@ -230,27 +222,27 @@
 
           <!-- Bar Visual -->
           <div class="h-48 flex items-end justify-between gap-3 pt-4 pb-2 px-2">
-            <div v-for="bar in barData" :key="bar.month" class="flex-1 flex flex-col items-center gap-1.5 group">
+            <div v-for="bar in revenueBars" :key="bar.month" class="flex-1 flex flex-col items-center gap-1.5 group">
               <div class="w-full flex items-end justify-center gap-1 h-36">
-                <div class="w-2 bg-[#6c5ffc] rounded-t-sm" :style="{ height: `${bar.gym}%` }"></div>
-                <div class="w-2 bg-[#09ad95] rounded-t-sm" :style="{ height: `${bar.pt}%` }"></div>
-                <div class="w-2 bg-[#05c3fb] rounded-t-sm" :style="{ height: `${bar.pos}%` }"></div>
+                <div class="w-2 bg-[#6c5ffc] rounded-t-sm" :style="{ height: `${bar.gymPercent}%` }" :title="`Langganan: ${formatRupiah(bar.gym)}`"></div>
+                <div class="w-2 bg-[#09ad95] rounded-t-sm" :style="{ height: `${bar.ptPercent}%` }" :title="`Sesi PT: ${formatRupiah(bar.pt)}`"></div>
+                <div class="w-2 bg-[#05c3fb] rounded-t-sm" :style="{ height: `${bar.posPercent}%` }" :title="`Kasir POS: ${formatRupiah(bar.pos)}`"></div>
               </div>
-              <span class="text-[10px] text-[#777587] font-semibold" :class="bar.current ? 'text-[#6c5ffc] font-bold' : ''">{{ bar.month }}</span>
+              <span class="text-[10px] text-[#777587] font-semibold" :class="bar.is_current ? 'text-[#6c5ffc] font-bold' : ''">{{ bar.month }}</span>
             </div>
           </div>
         </div>
 
         <div class="pt-3 border-t border-[#e9edf4] flex items-center justify-between text-xs text-[#474555]">
-          <span>Rata-rata pertumbuhan: <strong class="text-[#09ad95]">+14.2%</strong> per kuartal</span>
-          <span class="text-[#6c5ffc] font-bold cursor-pointer hover:underline flex items-center gap-0.5">
+          <span>Arahkan kursor ke batang untuk melihat nominal.</span>
+          <Link :href="route('reports')" class="text-[#6c5ffc] font-bold hover:underline flex items-center gap-0.5">
             Rincian Keuangan <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-          </span>
+          </Link>
         </div>
       </div>
 
-      <!-- Donut Demografi & Okupansi (3 cols) -->
-      <div class="lg:col-span-3 bg-white rounded-xl p-5 border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] flex flex-col justify-between">
+      <!-- Donut Demografi (3 cols; 6 cols jika grafik keuangan disembunyikan) -->
+      <div :class="canViewFinancials ? 'lg:col-span-3' : 'lg:col-span-6'" class="bg-white rounded-xl p-5 border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between pb-3 border-b border-[#e9edf4] mb-3">
             <h3 class="text-sm font-bold text-[#121c2c]">Demografi Member</h3>
@@ -260,11 +252,11 @@
           <div class="relative w-32 h-32 mx-auto my-2 flex items-center justify-center">
             <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
               <path class="text-[#e8eeff]" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
-              <path class="text-[#6c5ffc]" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="62, 100" stroke-linecap="round" stroke-width="3.5"></path>
-              <path class="text-[#d7347a]" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="38, 100" stroke-dashoffset="-62" stroke-linecap="round" stroke-width="3.5"></path>
+              <path class="text-[#6c5ffc]" :stroke-dasharray="`${malePercent}, 100`" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="3.5"></path>
+              <path class="text-[#d7347a]" :stroke-dasharray="`${femalePercent}, 100`" :stroke-dashoffset="-malePercent" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="3.5"></path>
             </svg>
             <div class="absolute flex flex-col items-center justify-center text-center">
-              <span class="text-xl font-bold text-[#121c2c] leading-none tnum">1.248</span>
+              <span class="text-xl font-bold text-[#121c2c] leading-none tnum">{{ demographics.total.toLocaleString('id-ID') }}</span>
               <span class="text-[10px] text-[#777587] mt-0.5">Member</span>
             </div>
           </div>
@@ -275,25 +267,25 @@
                 <span class="w-2.5 h-2.5 rounded-full bg-[#6c5ffc]"></span>
                 <span class="text-[#474555]">Member Pria</span>
               </div>
-              <span class="font-bold text-[#121c2c]">62% (774)</span>
+              <span class="font-bold text-[#121c2c]">{{ malePercent }}% ({{ demographics.male }})</span>
             </div>
             <div class="flex items-center justify-between text-xs">
               <div class="flex items-center gap-1.5">
                 <span class="w-2.5 h-2.5 rounded-full bg-[#d7347a]"></span>
                 <span class="text-[#474555]">Member Wanita</span>
               </div>
-              <span class="font-bold text-[#121c2c]">38% (474)</span>
+              <span class="font-bold text-[#121c2c]">{{ femalePercent }}% ({{ demographics.female }})</span>
             </div>
           </div>
         </div>
 
         <div class="pt-3 border-t border-[#e9edf4] text-center">
-          <span class="text-[11px] text-[#09ad95] font-semibold">Usia Dominan: 22 - 38 Tahun</span>
+          <span class="text-[11px] text-[#777587] font-semibold">Member berstatus aktif<template v-if="demographics.other > 0"> • Lainnya: {{ demographics.other }}</template></span>
         </div>
       </div>
 
-      <!-- Status Hardware Kios (3 cols) -->
-      <div class="lg:col-span-3 bg-white rounded-xl p-5 border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] flex flex-col justify-between">
+      <!-- Status Perangkat Kios (3 cols; 6 cols jika grafik keuangan disembunyikan) -->
+      <div :class="canViewFinancials ? 'lg:col-span-3' : 'lg:col-span-6'" class="bg-white rounded-xl p-5 border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between pb-3 border-b border-[#e9edf4] mb-3">
             <h3 class="text-sm font-bold text-[#121c2c]">Status Perangkat Kios</h3>
@@ -309,12 +301,10 @@
                 </div>
                 <div>
                   <p class="text-xs font-bold text-[#121c2c]">RFID USB Reader</p>
-                  <p class="text-[10px] text-[#777587]">{{ hardwareStatus.rfid_reader.type }}</p>
+                  <p class="text-[10px] text-[#777587]">USB HID Keyboard</p>
                 </div>
               </div>
-              <span class="inline-flex items-center gap-1 text-[10px] font-bold text-[#09ad95] bg-[#09ad95]/10 px-2 py-0.5 rounded-full">
-                {{ hardwareStatus.rfid_reader.status }}
-              </span>
+              <span class="text-[10px] font-semibold text-[#777587]">Cek di kios</span>
             </div>
 
             <!-- Webcam -->
@@ -325,12 +315,10 @@
                 </div>
                 <div>
                   <p class="text-xs font-bold text-[#121c2c]">Webcam Pintu</p>
-                  <p class="text-[10px] text-[#777587]">{{ hardwareStatus.webcam.type }}</p>
+                  <p class="text-[10px] text-[#777587]">Kamera browser</p>
                 </div>
               </div>
-              <span class="inline-flex items-center gap-1 text-[10px] font-bold text-[#09ad95] bg-[#09ad95]/10 px-2 py-0.5 rounded-full">
-                {{ hardwareStatus.webcam.status }}
-              </span>
+              <span class="text-[10px] font-semibold text-[#777587]">Cek di kios</span>
             </div>
 
             <!-- POS Printer -->
@@ -341,12 +329,10 @@
                 </div>
                 <div>
                   <p class="text-xs font-bold text-[#121c2c]">Printer Struk POS</p>
-                  <p class="text-[10px] text-[#777587]">{{ hardwareStatus.pos_printer.type }}</p>
+                  <p class="text-[10px] text-[#777587]">Printer struk browser</p>
                 </div>
               </div>
-              <span class="inline-flex items-center gap-1 text-[10px] font-bold text-[#09ad95] bg-[#09ad95]/10 px-2 py-0.5 rounded-full">
-                {{ hardwareStatus.pos_printer.status }}
-              </span>
+              <span class="text-[10px] font-semibold text-[#777587]">Cek di kios</span>
             </div>
 
             <!-- Database -->
@@ -360,25 +346,26 @@
                   <p class="text-[10px] text-[#777587]">MySQL InnoDB</p>
                 </div>
               </div>
-              <span class="text-xs font-bold text-[#121c2c] tnum">{{ hardwareStatus.db_latency }}</span>
+              <span class="text-xs font-bold text-[#121c2c] tnum">{{ databaseLatencyMs }} ms</span>
             </div>
           </div>
         </div>
 
-        <button 
-          @click="diagnosticAlert"
+        <!-- Status RFID & webcam hanya bisa diketahui di komputer kios, jadi arahkan ke layar kios -->
+        <Link
+          :href="route('kiosk')"
           class="w-full mt-3 py-1.5 rounded-lg bg-[#e8eeff] hover:bg-[#dfe8ff] text-[#5242e2] text-xs font-bold transition-colors flex items-center justify-center gap-1"
         >
-          <span class="material-symbols-outlined text-[15px]">refresh</span>
-          <span>Diagnostik Kios</span>
-        </button>
+          <span class="material-symbols-outlined text-[15px]">qr_code_scanner</span>
+          <span>Buka Layar Kios</span>
+        </Link>
       </div>
 
     </section>
 
     <!-- ==================== ROW 4: DATA TABLE (LOG KEHADIRAN RFID REAL-TIME) ==================== -->
     <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      
+
       <!-- Tabel Log Kehadiran Gerbang (8 cols) -->
       <div class="lg:col-span-8 bg-white rounded-xl p-5 border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)]">
         <div class="flex items-center justify-between pb-3 border-b border-[#e9edf4] mb-3">
@@ -392,7 +379,7 @@
             <p class="text-[11px] text-[#777587]">Rekaman scan kartu RFID & snapshot otomatis di pintu gerbang.</p>
           </div>
           <div class="flex items-center gap-2">
-            <button 
+            <button
               @click="reloadAttendances"
               class="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-[#5242e2] bg-[#e8eeff] hover:bg-[#dfe8ff] rounded-lg transition-colors"
               :disabled="isReloading"
@@ -401,7 +388,7 @@
               <span class="material-symbols-outlined text-[15px]" :class="{ 'animate-spin': isReloading }">refresh</span>
               <span>Perbarui</span>
             </button>
-            <Link 
+            <Link
               :href="route('kiosk')"
               class="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-white bg-[#09ad95] hover:bg-[#078d7a] rounded-lg transition-colors"
               title="Buka Kios Mandiri"
@@ -427,7 +414,7 @@
             <tbody class="divide-y divide-[#f0f3f8] text-xs">
               <tr v-for="log in recentAttendances" :key="log.id" class="hover:bg-[#fbfcfe] transition-colors">
                 <td class="py-3 px-3 font-semibold text-[#121c2c] flex items-center gap-2.5">
-                  <div 
+                  <div
                     class="relative w-9 h-9 rounded-lg overflow-hidden border border-[#e9edf4] bg-slate-100 flex-shrink-0 cursor-pointer"
                     @click="openSnapshotModal(log)"
                   >
@@ -435,7 +422,7 @@
                     <div v-else class="w-full h-full flex items-center justify-center text-[#777587] bg-slate-100">
                       <span class="material-symbols-outlined text-[18px]">person</span>
                     </div>
-                    <span 
+                    <span
                       class="absolute bottom-0 right-0 w-2 h-2 rounded-full border border-white"
                       :class="log.status === 'IN' ? 'bg-[#09ad95]' : 'bg-[#05c3fb]'"
                     ></span>
@@ -454,7 +441,7 @@
                   {{ log.scanned_time }} <span class="text-[#777587] text-[10px] block">{{ log.time_ago }}</span>
                 </td>
                 <td class="py-3 px-3">
-                  <span 
+                  <span
                     class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold"
                     :class="log.status === 'IN' ? 'bg-[#09ad95]/10 text-[#09ad95]' : 'bg-[#05c3fb]/10 text-[#05c3fb]'"
                   >
@@ -463,10 +450,10 @@
                   </span>
                 </td>
                 <td class="py-3 px-3 text-right">
-                  <button 
+                  <button
                     v-if="log.snapshot_url"
                     @click="openSnapshotModal(log)"
-                    class="p-1 text-[#777587] hover:text-[#5242e2] transition-colors" 
+                    class="p-1 text-[#777587] hover:text-[#5242e2] transition-colors"
                     title="Lihat Snapshot"
                   >
                     <span class="material-symbols-outlined text-[16px]">photo_camera</span>
@@ -495,7 +482,7 @@
 
       <!-- Sesi PT Terbaru & Audit Void Alert (4 cols) -->
       <div class="lg:col-span-4 space-y-6">
-        
+
         <!-- Sesi PT Terbaru -->
         <div class="bg-white rounded-xl p-5 border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)]">
           <div class="flex items-center justify-between pb-3 border-b border-[#e9edf4] mb-3">
@@ -504,6 +491,9 @@
           </div>
 
           <div class="space-y-3">
+            <p v-if="!recentPtSessions || recentPtSessions.length === 0" class="text-xs text-[#777587] text-center py-4">
+              Belum ada sesi PT yang tercatat.
+            </p>
             <div v-for="pt in recentPtSessions" :key="pt.id" class="flex items-start justify-between">
               <div class="flex items-start gap-2.5">
                 <div class="w-7 h-7 rounded-lg bg-[#5242e2]/10 text-[#5242e2] flex items-center justify-center font-bold text-[11px] mt-0.5">
@@ -529,7 +519,7 @@
             <div>
               <p class="text-xs font-bold text-amber-900 leading-tight">Audit Keamanan Void POS</p>
               <p class="text-[11px] text-amber-700 mt-1 leading-snug">
-                Semua pembatalan kasir wajib otorisasi PIN Supervisor. Hari ini: <strong>0 Void</strong> (100% kepatuhan).
+                Semua pembatalan kasir wajib otorisasi PIN Supervisor. Hari ini: <strong>{{ metrics.today_void_count }} Void</strong>.
               </p>
             </div>
           </div>
@@ -540,8 +530,8 @@
     </section>
 
     <!-- Modal Snapshot Webcam Preview -->
-    <div 
-      v-if="selectedSnapshot" 
+    <div
+      v-if="selectedSnapshot"
       class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
       @click.self="selectedSnapshot = null"
     >
@@ -554,7 +544,7 @@
               <p class="text-[10px] text-[#777587] leading-tight">{{ selectedSnapshot.scanned_time }} • {{ selectedSnapshot.member_name }}</p>
             </div>
           </div>
-          <button 
+          <button
             @click="selectedSnapshot = null"
             class="p-1 rounded-lg text-[#777587] hover:bg-slate-200 transition-colors"
           >
@@ -562,8 +552,8 @@
           </button>
         </div>
         <div class="p-4 bg-slate-900 flex items-center justify-center min-h-[260px]">
-          <img 
-            :src="selectedSnapshot.snapshot_url" 
+          <img
+            :src="selectedSnapshot.snapshot_url"
             :alt="selectedSnapshot.member_name"
             class="max-w-full max-h-[360px] rounded-lg shadow-md object-contain"
           />
@@ -573,7 +563,7 @@
             <p class="font-bold text-[#121c2c]">{{ selectedSnapshot.member_name }} ({{ selectedSnapshot.member_code }})</p>
             <p class="text-[11px] text-[#777587]">RFID: {{ selectedSnapshot.rfid_uid }} • {{ selectedSnapshot.package_name }}</p>
           </div>
-          <span 
+          <span
             class="px-2.5 py-1 rounded-full font-bold text-[10px]"
             :class="selectedSnapshot.status === 'IN' ? 'bg-[#09ad95]/15 text-[#09ad95]' : 'bg-[#05c3fb]/15 text-[#05c3fb]'"
           >
@@ -587,16 +577,58 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { router, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 const props = defineProps({
   metrics: Object,
+  // true jika user punya permission "view_reports" (boleh melihat data keuangan)
+  canViewFinancials: Boolean,
+  // Pendapatan 6 bulan terakhir: [{ month, gym, pt, pos, is_current }], null jika tidak boleh lihat
+  monthlyRevenue: Array,
+  // Jumlah member aktif per jenis kelamin: { total, male, female, other }
+  demographics: Object,
+  databaseLatencyMs: Number,
   recentAttendances: Array,
   recentPtSessions: Array,
-  hardwareStatus: Object,
   userRole: String,
+});
+
+// Tanggal hari ini dalam format Indonesia, contoh: "12 November 2026"
+const todayLabel = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+
+// Format angka menjadi Rupiah, contoh: 1500000 -> "Rp 1.500.000"
+const formatRupiah = (value) => 'Rp ' + Math.round(Number(value) || 0).toLocaleString('id-ID');
+
+// Persentase okupansi gym (maksimal 100%)
+const occupancyPercent = computed(() => {
+  if (!props.metrics.gym_capacity) return 0;
+  return Math.min(100, Math.round((props.metrics.in_gym_count / props.metrics.gym_capacity) * 100));
+});
+
+// Tinggi batang grafik dalam persen, dibandingkan nilai TERBESAR di grafik.
+const revenueBars = computed(() => {
+  const months = props.monthlyRevenue || [];
+  const highestValue = Math.max(1, ...months.flatMap((m) => [m.gym, m.pt, m.pos]));
+  const toPercent = (value) => Math.round((value / highestValue) * 100);
+
+  return months.map((m) => ({
+    ...m,
+    gymPercent: toPercent(m.gym),
+    ptPercent: toPercent(m.pt),
+    posPercent: toPercent(m.pos),
+  }));
+});
+
+// Persentase member pria & wanita untuk grafik donat
+const malePercent = computed(() => {
+  const total = props.demographics?.total || 0;
+  return total > 0 ? Math.round((props.demographics.male / total) * 100) : 0;
+});
+const femalePercent = computed(() => {
+  const total = props.demographics?.total || 0;
+  return total > 0 ? Math.round((props.demographics.female / total) * 100) : 0;
 });
 
 const isReloading = ref(false);
@@ -638,20 +670,4 @@ onUnmounted(() => {
   }
 });
 
-const barData = [
-  { month: 'Mei', gym: 65, pt: 45, pos: 25, current: false },
-  { month: 'Jun', gym: 75, pt: 52, pos: 30, current: false },
-  { month: 'Jul', gym: 70, pt: 60, pos: 35, current: false },
-  { month: 'Agu', gym: 85, pt: 65, pos: 42, current: false },
-  { month: 'Sep', gym: 90, pt: 72, pos: 48, current: false },
-  { month: 'Okt', gym: 95, pt: 80, pos: 55, current: true },
-];
-
-const exportAlert = () => {
-  alert('Fitur Ekspor Laporan akan diproses pada modul Laporan & Analitik (Issue #7).');
-};
-
-const diagnosticAlert = () => {
-  alert('Uji diagnostik perangkat kios: Semua sensor RFID & Webcam beroperasi normal (Latency: 12ms).');
-};
 </script>
