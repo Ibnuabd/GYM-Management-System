@@ -385,11 +385,30 @@
           <div>
             <div class="flex items-center gap-2">
               <h3 class="text-sm font-bold text-[#121c2c]">Log Kehadiran Gerbang Real-time</h3>
-              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#09ad95]/10 text-[#09ad95]">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#09ad95]/10 text-[#09ad95] animate-pulse">
                 RFID + Webcam Sync
               </span>
             </div>
             <p class="text-[11px] text-[#777587]">Rekaman scan kartu RFID & snapshot otomatis di pintu gerbang.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button 
+              @click="reloadAttendances"
+              class="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-[#5242e2] bg-[#e8eeff] hover:bg-[#dfe8ff] rounded-lg transition-colors"
+              :disabled="isReloading"
+              title="Perbarui Data Kehadiran"
+            >
+              <span class="material-symbols-outlined text-[15px]" :class="{ 'animate-spin': isReloading }">refresh</span>
+              <span>Perbarui</span>
+            </button>
+            <Link 
+              :href="route('kiosk')"
+              class="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-white bg-[#09ad95] hover:bg-[#078d7a] rounded-lg transition-colors"
+              title="Buka Kios Mandiri"
+            >
+              <span class="material-symbols-outlined text-[15px]">qr_code_scanner</span>
+              <span>Layar Kios</span>
+            </Link>
           </div>
         </div>
 
@@ -408,8 +427,14 @@
             <tbody class="divide-y divide-[#f0f3f8] text-xs">
               <tr v-for="log in recentAttendances" :key="log.id" class="hover:bg-[#fbfcfe] transition-colors">
                 <td class="py-3 px-3 font-semibold text-[#121c2c] flex items-center gap-2.5">
-                  <div class="relative w-9 h-9 rounded-lg overflow-hidden border border-[#e9edf4] bg-slate-100 flex-shrink-0">
-                    <img :src="log.snapshot_url" class="w-full h-full object-cover" alt="Webcam Photo" />
+                  <div 
+                    class="relative w-9 h-9 rounded-lg overflow-hidden border border-[#e9edf4] bg-slate-100 flex-shrink-0 cursor-pointer"
+                    @click="openSnapshotModal(log)"
+                  >
+                    <img v-if="log.snapshot_url" :src="log.snapshot_url" class="w-full h-full object-cover" alt="Webcam Photo" />
+                    <div v-else class="w-full h-full flex items-center justify-center text-[#777587] bg-slate-100">
+                      <span class="material-symbols-outlined text-[18px]">person</span>
+                    </div>
                     <span 
                       class="absolute bottom-0 right-0 w-2 h-2 rounded-full border border-white"
                       :class="log.status === 'IN' ? 'bg-[#09ad95]' : 'bg-[#05c3fb]'"
@@ -438,9 +463,20 @@
                   </span>
                 </td>
                 <td class="py-3 px-3 text-right">
-                  <button class="p-1 text-[#777587] hover:text-[#5242e2] transition-colors" title="Lihat Snapshot">
+                  <button 
+                    v-if="log.snapshot_url"
+                    @click="openSnapshotModal(log)"
+                    class="p-1 text-[#777587] hover:text-[#5242e2] transition-colors" 
+                    title="Lihat Snapshot"
+                  >
                     <span class="material-symbols-outlined text-[16px]">photo_camera</span>
                   </button>
+                </td>
+              </tr>
+              <tr v-if="!recentAttendances || recentAttendances.length === 0">
+                <td colspan="5" class="py-8 text-center text-[#777587]">
+                  <span class="material-symbols-outlined text-[32px] text-[#c8c4d8] block mb-1">badge</span>
+                  Belum ada rekaman kehadiran hari ini.
                 </td>
               </tr>
             </tbody>
@@ -448,7 +484,7 @@
         </div>
 
         <div class="flex items-center justify-between pt-3 mt-2 border-t border-[#e9edf4] text-xs">
-          <span class="text-[#777587] text-[11px]">Menampilkan 4 dari {{ metrics.today_checkins }} log hari ini</span>
+          <span class="text-[#777587] text-[11px]">Menampilkan {{ recentAttendances?.length || 0 }} dari {{ metrics.today_checkins }} log hari ini</span>
           <div class="flex items-center gap-1">
             <button class="px-2 py-0.5 text-xs rounded border border-[#c8c4d8]/40 text-[#777587] hover:bg-[#e8eeff]">Prev</button>
             <button class="px-2 py-0.5 text-xs rounded bg-[#5242e2] text-white font-bold">1</button>
@@ -503,10 +539,56 @@
 
     </section>
 
+    <!-- Modal Snapshot Webcam Preview -->
+    <div 
+      v-if="selectedSnapshot" 
+      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+      @click.self="selectedSnapshot = null"
+    >
+      <div class="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-[#e9edf4] animate-scaleIn">
+        <div class="p-4 border-b border-[#e9edf4] flex items-center justify-between bg-slate-50">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[20px] text-[#5242e2]">photo_camera</span>
+            <div>
+              <h4 class="text-xs font-bold text-[#121c2c] leading-tight">Snapshot Gerbang Masuk</h4>
+              <p class="text-[10px] text-[#777587] leading-tight">{{ selectedSnapshot.scanned_time }} • {{ selectedSnapshot.member_name }}</p>
+            </div>
+          </div>
+          <button 
+            @click="selectedSnapshot = null"
+            class="p-1 rounded-lg text-[#777587] hover:bg-slate-200 transition-colors"
+          >
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+        <div class="p-4 bg-slate-900 flex items-center justify-center min-h-[260px]">
+          <img 
+            :src="selectedSnapshot.snapshot_url" 
+            :alt="selectedSnapshot.member_name"
+            class="max-w-full max-h-[360px] rounded-lg shadow-md object-contain"
+          />
+        </div>
+        <div class="p-4 bg-white flex items-center justify-between text-xs">
+          <div>
+            <p class="font-bold text-[#121c2c]">{{ selectedSnapshot.member_name }} ({{ selectedSnapshot.member_code }})</p>
+            <p class="text-[11px] text-[#777587]">RFID: {{ selectedSnapshot.rfid_uid }} • {{ selectedSnapshot.package_name }}</p>
+          </div>
+          <span 
+            class="px-2.5 py-1 rounded-full font-bold text-[10px]"
+            :class="selectedSnapshot.status === 'IN' ? 'bg-[#09ad95]/15 text-[#09ad95]' : 'bg-[#05c3fb]/15 text-[#05c3fb]'"
+          >
+            {{ selectedSnapshot.status === 'IN' ? 'IN (Masuk)' : 'OUT (Keluar)' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
   </AuthenticatedLayout>
 </template>
 
 <script setup>
+import { ref, onMounted, onUnmounted } from 'vue';
+import { router, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 const props = defineProps({
@@ -515,6 +597,45 @@ const props = defineProps({
   recentPtSessions: Array,
   hardwareStatus: Object,
   userRole: String,
+});
+
+const isReloading = ref(false);
+const selectedSnapshot = ref(null);
+let pollInterval = null;
+
+const openSnapshotModal = (log) => {
+  if (log.snapshot_url) {
+    selectedSnapshot.value = log;
+  }
+};
+
+const reloadAttendances = () => {
+  isReloading.value = true;
+  router.reload({
+    only: ['recentAttendances', 'metrics'],
+    preserveScroll: true,
+    preserveState: true,
+    onFinish: () => {
+      isReloading.value = false;
+    },
+  });
+};
+
+onMounted(() => {
+  // Poll recent attendances reactively every 5 seconds without full page reload
+  pollInterval = setInterval(() => {
+    router.reload({
+      only: ['recentAttendances', 'metrics'],
+      preserveScroll: true,
+      preserveState: true,
+    });
+  }, 5000);
+});
+
+onUnmounted(() => {
+  if (pollInterval) {
+    clearInterval(pollInterval);
+  }
 });
 
 const barData = [

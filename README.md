@@ -7,6 +7,50 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Menjalankan Test
+
+Test memakai **database terpisah** bernama `gym_management_system_test` (diatur di `phpunit.xml`).
+Isi database ini dihapus dan dibuat ulang setiap test berjalan, jadi data development (`gym_management_system`) tetap aman.
+
+**Persiapan (cukup sekali):** buat database test kosong di MySQL.
+
+```sql
+CREATE DATABASE gym_management_system_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+Tidak perlu menjalankan migration manual. Semua test memakai `RefreshDatabase`, yang otomatis membuat tabel di database test.
+
+**Menjalankan test:**
+
+```bash
+php artisan test --compact                                   # semua test
+php artisan test --compact tests/Feature/PosRetailCashierTest.php   # satu file
+```
+
+**Aturan untuk test baru:** selalu tambahkan `use RefreshDatabase;` di dalam class test yang memakai database.
+
+**Pengaman:** `tests/TestCase.php` menghentikan test jika nama database tidak berakhiran `_test`.
+Jika muncul pesan *"Test DIHENTIKAN"*, periksa `DB_DATABASE` di `phpunit.xml`, lalu jalankan `php artisan config:clear`.
+
+## Scheduler (Jadwal Otomatis)
+
+Beberapa tugas berjalan otomatis setiap hari (diatur di `routes/console.php`), misalnya:
+
+- `subscriptions:sync-status` (setiap hari 00:05): mengaktifkan paket perpanjangan (`queued` → `active`) dan mengedaluwarsakan paket yang sudah berakhir (`active` → `expired`).
+
+**Di server (production):** tambahkan satu baris cron ini (ganti path sesuai lokasi project):
+
+```bash
+* * * * * cd /path/ke/project && php artisan schedule:run >> /dev/null 2>&1
+```
+
+**Saat development:** jalankan `php artisan schedule:work` di terminal terpisah, atau jalankan tugasnya langsung:
+
+```bash
+php artisan subscriptions:sync-status
+php artisan schedule:list    # melihat daftar jadwal
+```
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

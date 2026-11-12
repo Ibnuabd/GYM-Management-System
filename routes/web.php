@@ -1,7 +1,17 @@
 <?php
 
+use App\Http\Controllers\AttendanceKioskController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MemberController;
+use App\Http\Controllers\MemberPortalAuthController;
+use App\Http\Controllers\MemberPortalController;
+use App\Http\Controllers\PackageController;
+use App\Http\Controllers\PersonalTrainerController;
+use App\Http\Controllers\PosController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
 // Guest Authentication Routes
@@ -10,8 +20,8 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 });
 
-// Authenticated Routes
-Route::middleware('auth')->group(function () {
+// Authenticated Staff Routes
+Route::middleware('auth:web')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/', function () {
@@ -20,24 +30,92 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Role-protected mock routes (for testing RBAC authorization and guards)
-    Route::get('/kiosk', function () {
-        return response()->json(['message' => 'Akses Kios Kehadiran diizinkan', 'role' => auth()->user()->getRoleNames()]);
-    })->middleware('permission:scan_attendance')->name('kiosk');
+    // Members Management
+    Route::middleware('permission:manage_members')->group(function () {
+        Route::get('/members/quick-search', [MemberController::class, 'quickSearch'])->name('members.quick-search');
+        Route::get('/members/check-rfid', [MemberController::class, 'checkRfid'])->name('members.check-rfid');
+        Route::get('/members', [MemberController::class, 'index'])->name('members.index');
+        Route::get('/members/create', [MemberController::class, 'create'])->name('members.create');
+        Route::post('/members', [MemberController::class, 'store'])->name('members.store');
+        Route::get('/members/{member}', [MemberController::class, 'show'])->name('members.show');
+        Route::get('/members/{member}/edit', [MemberController::class, 'edit'])->name('members.edit');
+        Route::put('/members/{member}', [MemberController::class, 'update'])->name('members.update');
+        Route::delete('/members/{member}', [MemberController::class, 'destroy'])->name('members.destroy');
 
-    Route::get('/pos', function () {
-        return response()->json(['message' => 'Akses Kasir POS diizinkan', 'role' => auth()->user()->getRoleNames()]);
-    })->middleware('permission:pos_cashier')->name('pos');
+        // Packages: CS boleh MELIHAT daftar paket
+        Route::get('/packages', [PackageController::class, 'index'])->name('packages.index');
+    });
 
-    Route::get('/pt', function () {
-        return response()->json(['message' => 'Akses Dashboard PT diizinkan', 'role' => auth()->user()->getRoleNames()]);
-    })->middleware('permission:manage_pt_sessions')->name('pt.dashboard');
+    // Packages: hanya admin & supervisor yang boleh mengubah paket dan harganya
+    Route::middleware('permission:manage_packages')->group(function () {
+        Route::post('/packages', [PackageController::class, 'store'])->name('packages.store');
+        Route::put('/packages/{package}', [PackageController::class, 'update'])->name('packages.update');
+        Route::delete('/packages/{package}', [PackageController::class, 'destroy'])->name('packages.destroy');
+    });
 
-    Route::get('/reports', function () {
-        return response()->json(['message' => 'Akses Laporan Keuangan diizinkan', 'role' => auth()->user()->getRoleNames()]);
-    })->middleware('permission:view_reports')->name('reports');
+    // Subscriptions Management
+    Route::middleware('permission:manage_subscriptions')->group(function () {
+        Route::post('/members/{member}/subscriptions', [SubscriptionController::class, 'store'])->name('subscriptions.store');
+        Route::post('/subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
+        Route::post('/subscriptions/{subscription}/activate', [SubscriptionController::class, 'activate'])->name('subscriptions.activate');
+    });
+
+    // Attendance Kiosk
+    Route::middleware('permission:scan_attendance')->group(function () {
+        Route::get('/kiosk', [AttendanceKioskController::class, 'index'])->name('kiosk');
+        Route::post('/kiosk/scan', [AttendanceKioskController::class, 'scan'])->name('kiosk.scan');
+        Route::get('/kiosk/recent', [AttendanceKioskController::class, 'recentLogs'])->name('kiosk.recent');
+    });
+
+    // POS Retail Cashier & Transactions
+    Route::middleware('permission:pos_cashier')->group(function () {
+        Route::get('/pos', [PosController::class, 'index'])->name('pos');
+        Route::get('/pos/search', [PosController::class, 'search'])->name('pos.search');
+        Route::post('/pos/checkout', [PosController::class, 'checkout'])->name('pos.checkout');
+        Route::post('/pos/transactions/{transaction}/void', [PosController::class, 'voidTransaction'])->name('pos.void');
+        Route::delete('/pos/transactions/{transaction}', [PosController::class, 'destroy'])->name('pos.destroy');
+
+        // Product Catalog: kasir boleh MELIHAT katalog produk
+        Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+    });
+
+    // Product Catalog: hanya admin & supervisor yang boleh mengubah produk, harga, dan stok
+    Route::middleware('permission:manage_products')->group(function () {
+        Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+        Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
+        Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+    });
+
+    // Personal Trainer Operations
+    Route::middleware('permission:manage_pt_sessions')->group(function () {
+        Route::get('/pt', [PersonalTrainerController::class, 'index'])->name('pt.dashboard');
+        Route::post('/pt/sessions', [PersonalTrainerController::class, 'storeSession'])->name('pt.sessions.store');
+        Route::get('/pt/members/{member}/history', [PersonalTrainerController::class, 'memberHistory'])->name('pt.members.history');
+    });
+
+    // Financial & Operational Reports
+    Route::middleware('permission:view_reports')->group(function () {
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports');
+        Route::get('/reports/export/pdf', [ReportController::class, 'exportPdf'])->name('reports.export.pdf');
+        Route::get('/reports/export/excel', [ReportController::class, 'exportExcel'])->name('reports.export.excel');
+    });
 
     Route::get('/users', function () {
         return response()->json(['message' => 'Akses Manajemen User diizinkan', 'role' => auth()->user()->getRoleNames()]);
     })->middleware('permission:manage_users')->name('users');
+});
+
+// Member Self-Service Portal Guest Routes
+Route::prefix('portal')->group(function () {
+    Route::get('/login', [MemberPortalAuthController::class, 'showLogin'])->name('portal.login');
+    Route::post('/login', [MemberPortalAuthController::class, 'login']);
+});
+
+// Member Self-Service Portal Authenticated Routes (Strict Read-Only)
+Route::middleware('auth:member')->prefix('portal')->group(function () {
+    Route::post('/logout', [MemberPortalAuthController::class, 'logout'])->name('portal.logout');
+    Route::get('/', [MemberPortalController::class, 'index'])->name('portal.dashboard');
+    Route::get('/card', [MemberPortalController::class, 'digitalCard'])->name('portal.card');
+    Route::get('/pt-progress', [MemberPortalController::class, 'ptProgress'])->name('portal.pt-progress');
+    Route::get('/workouts', [MemberPortalController::class, 'workoutHistory'])->name('portal.workouts');
 });

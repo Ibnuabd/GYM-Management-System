@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html class="h-full" lang="id">
+
 <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>FitCore GMS - Dashboard Manajemen Gym Terintegrasi</title>
-  
+
   <!-- Google Fonts: Plus Jakarta Sans & Inter -->
-  <link href="https://fonts.googleapis.com" rel="preconnect"/>
-  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+
   <!-- Material Symbols Outlined -->
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-  
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+
   <!-- Tailwind CSS CDN with forms & container queries -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  
+
   <!-- Tailwind Config based on Sash Enterprise Design System -->
   <script id="tailwind-config">
     tailwind.config = {
@@ -92,7 +96,7 @@
       }
     }
   </script>
-  
+
   <style>
     .material-symbols-outlined {
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -100,19 +104,24 @@
       vertical-align: middle;
       line-height: 1;
     }
+
     .custom-scroll::-webkit-scrollbar {
       width: 4px;
     }
+
     .custom-scroll::-webkit-scrollbar-track {
       background: transparent;
     }
+
     .custom-scroll::-webkit-scrollbar-thumb {
       background: #e2e7f1;
       border-radius: 4px;
     }
+
     .custom-scroll::-webkit-scrollbar-thumb:hover {
       background: #c8c4d8;
     }
+
     .tnum {
       font-feature-settings: "tnum" 1, "cv05" 1;
     }
@@ -122,15 +131,19 @@
 <body class="bg-[#f0f3fb] text-on-surface font-body-md antialiased min-h-screen flex">
 
   <!-- ==================== SIDEBAR COMPONENT ==================== -->
-  <aside class="fixed top-0 left-0 h-screen w-64 z-50 bg-surface-container-lowest border-r border-outline-variant/30 flex flex-col justify-between custom-scroll overflow-y-auto shadow-sm">
+  <aside
+    class="fixed top-0 left-0 h-screen w-64 z-50 bg-surface-container-lowest border-r border-outline-variant/30 flex flex-col justify-between custom-scroll overflow-y-auto shadow-sm">
     <div>
       <!-- Brand Logo Header -->
       <div class="h-16 flex items-center px-space-lg border-b border-outline-variant/30 gap-3">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#6c5ffc] to-[#5242e2] flex items-center justify-center text-white shadow-md shadow-primary/20">
+        <div
+          class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#6c5ffc] to-[#5242e2] flex items-center justify-center text-white shadow-md shadow-primary/20">
           <span class="material-symbols-outlined text-[22px]">fitness_center</span>
         </div>
         <div>
-          <span class="font-headline-sm text-headline-sm font-extrabold text-on-surface tracking-tight block leading-none">FitCore GMS</span>
+          <span
+            class="font-headline-sm text-headline-sm font-extrabold text-on-surface tracking-tight block leading-none">FitCore
+            GMS</span>
           <span class="text-[10px] text-outline font-semibold tracking-wider uppercase">Integrated Gym Suite</span>
         </div>
       </div>
@@ -139,30 +152,37 @@
       <nav class="px-space-md py-space-md space-y-5">
         <!-- UTAMA -->
         <div>
-          <span class="block px-space-md mb-2 text-label-sm font-label-sm uppercase tracking-wider text-outline font-bold">UTAMA</span>
+          <span
+            class="block px-space-md mb-2 text-label-sm font-label-sm uppercase tracking-wider text-outline font-bold">UTAMA</span>
           <div class="space-y-1">
-            <a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg bg-primary-container text-white font-label-md font-semibold transition-all duration-150 ease-out shadow-sm" href="#">
+            <a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg bg-primary-container text-white font-label-md font-semibold transition-all duration-150 ease-out shadow-sm"
+              href="#">
               <span class="material-symbols-outlined text-[18px]">dashboard</span>
-              <span>Dashboard Utama</span>
-              <span class="ml-auto text-[10px] bg-white/20 text-white font-label-sm font-bold px-1.5 py-0.5 rounded-full">Live</span>
+              <span>Dashboard</span>
+              <span
+                class="ml-auto text-[10px] bg-white/20 text-white font-label-sm font-bold px-1.5 py-0.5 rounded-full">Live</span>
             </a>
           </div>
         </div>
 
         <!-- OPERASIONAL GERBANG & KASIR -->
         <div>
-          <span class="block px-space-md mb-2 text-label-sm font-label-sm uppercase tracking-wider text-outline font-bold">OPERASIONAL</span>
+          <span
+            class="block px-space-md mb-2 text-label-sm font-label-sm uppercase tracking-wider text-outline font-bold">OPERASIONAL</span>
           <div class="space-y-1">
-            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md" href="#">
+            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md"
+              href="#">
               <span class="material-symbols-outlined text-[18px] text-[#09ad95]">badge</span>
-              <span>Kios Kehadiran (RFID)</span>
+              <span>Kehadiran (RFID)</span>
               <span class="ml-auto w-2 h-2 rounded-full bg-[#09ad95] ring-2 ring-[#09ad95]/20 animate-pulse"></span>
             </a>
-            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md" href="#">
+            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md"
+              href="#">
               <span class="material-symbols-outlined text-[18px] text-[#6c5ffc]">point_of_sale</span>
               <span>Kasir POS & Ritel</span>
             </a>
-            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md" href="#">
+            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md"
+              href="#">
               <span class="material-symbols-outlined text-[18px] text-[#f7b924]">sports_gymnastics</span>
               <span>Sesi Personal Trainer</span>
             </a>
@@ -171,17 +191,21 @@
 
         <!-- KEANGGOTAAN -->
         <div>
-          <span class="block px-space-md mb-2 text-label-sm font-label-sm uppercase tracking-wider text-outline font-bold">KEANGGOTAAN</span>
+          <span
+            class="block px-space-md mb-2 text-label-sm font-label-sm uppercase tracking-wider text-outline font-bold">KEANGGOTAAN</span>
           <div class="space-y-1">
-            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md" href="#">
+            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md"
+              href="#">
               <span class="material-symbols-outlined text-[18px] text-[#03c892]">group</span>
               <span>Data Member</span>
             </a>
-            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md" href="#">
+            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md"
+              href="#">
               <span class="material-symbols-outlined text-[18px] text-[#05c3fb]">card_membership</span>
               <span>Paket Langganan</span>
             </a>
-            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md" href="#">
+            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md"
+              href="#">
               <span class="material-symbols-outlined text-[18px] text-tertiary">inventory_2</span>
               <span>Stok Produk Kasir</span>
             </a>
@@ -190,17 +214,22 @@
 
         <!-- LAPORAN & AUDIT -->
         <div>
-          <span class="block px-space-md mb-2 text-label-sm font-label-sm uppercase tracking-wider text-outline font-bold">LAPORAN & AUDIT</span>
+          <span
+            class="block px-space-md mb-2 text-label-sm font-label-sm uppercase tracking-wider text-outline font-bold">LAPORAN
+            & AUDIT</span>
           <div class="space-y-1">
-            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md" href="#">
+            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md"
+              href="#">
               <span class="material-symbols-outlined text-[18px] text-[#6c5ffc]">query_stats</span>
               <span>Laporan Pendapatan</span>
             </a>
-            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md" href="#">
+            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md"
+              href="#">
               <span class="material-symbols-outlined text-[18px] text-[#09ad95]">camera_indoor</span>
-              <span>Log Kehadiran & Foto</span>
+              <span>Log Kehadiran</span>
             </a>
-            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md" href="#">
+            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md"
+              href="#">
               <span class="material-symbols-outlined text-[18px] text-[#ba1a1a]">verified_user</span>
               <span>Audit Otorisasi Void</span>
             </a>
@@ -209,15 +238,18 @@
 
         <!-- PENGATURAN -->
         <div>
-          <span class="block px-space-md mb-2 text-label-sm font-label-sm uppercase tracking-wider text-outline font-bold">PENGATURAN</span>
+          <span
+            class="block px-space-md mb-2 text-label-sm font-label-sm uppercase tracking-wider text-outline font-bold">PENGATURAN</span>
           <div class="space-y-1">
-            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md" href="#">
+            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md"
+              href="#">
               <span class="material-symbols-outlined text-[18px] text-primary">manage_accounts</span>
-              <span>Manajemen User (RBAC)</span>
+              <span>Manajemen User</span>
             </a>
-            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md" href="#">
+            <a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150 font-label-md"
+              href="#">
               <span class="material-symbols-outlined text-[18px] text-outline">tune</span>
-              <span>Pengaturan Kios & Kamera</span>
+              <span>Pengaturan</span>
             </a>
           </div>
         </div>
@@ -226,7 +258,8 @@
 
     <!-- Sidebar Footer / Hardware Status Badge -->
     <div class="p-space-md border-t border-outline-variant/30">
-      <div class="p-3 rounded-xl bg-gradient-to-br from-primary/10 via-surface-container to-secondary/10 border border-primary/20 text-center">
+      <div
+        class="p-3 rounded-xl bg-gradient-to-br from-primary/10 via-surface-container to-secondary/10 border border-primary/20 text-center">
         <div class="flex items-center justify-center gap-2 mb-1.5">
           <span class="w-2.5 h-2.5 rounded-full bg-[#09ad95] animate-ping"></span>
           <span class="w-2.5 h-2.5 rounded-full bg-[#09ad95] -ml-4.5"></span>
@@ -239,32 +272,40 @@
 
   <!-- ==================== MAIN WRAPPER ==================== -->
   <div class="flex-1 ml-64 flex flex-col min-h-screen">
-    
+
     <!-- Top Header Bar -->
-    <header class="sticky top-0 z-40 h-16 w-full bg-surface-container-lowest border-b border-outline-variant/30 px-space-lg flex items-center justify-between shadow-sm">
+    <header
+      class="sticky top-0 z-40 h-16 w-full bg-surface-container-lowest border-b border-outline-variant/30 px-space-lg flex items-center justify-between shadow-sm">
       <!-- Search Member / Quick Scan -->
       <div class="flex items-center gap-3 w-96">
-        <button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors duration-150">
+        <button
+          class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors duration-150">
           <span class="material-symbols-outlined text-[20px]">menu</span>
         </button>
         <div class="relative w-full">
-          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline">search</span>
-          <input class="w-full h-[40px] pl-9 pr-4 text-body-md font-body-md rounded-lg bg-[#f0f3fb]/60 border border-outline-variant/30 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-on-surface placeholder:text-outline outline-none" placeholder="Cari Member (Nama, RFID, No. HP)..." type="text"/>
+          <span
+            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline">search</span>
+          <input
+            class="w-full h-[40px] pl-9 pr-4 text-body-md font-body-md rounded-lg bg-[#f0f3fb]/60 border border-outline-variant/30 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-on-surface placeholder:text-outline outline-none"
+            placeholder="Cari Member (Nama, RFID, No. HP)..." type="text" />
         </div>
       </div>
 
       <!-- Action Items & User Profile -->
       <div class="flex items-center gap-2">
         <!-- Quick Kiosk Gate Button -->
-        <a href="#" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#09ad95]/10 text-[#09ad95] hover:bg-[#09ad95]/20 font-label-md font-bold text-xs transition-colors">
+        <a href="#"
+          class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#09ad95]/10 text-[#09ad95] hover:bg-[#09ad95]/20 font-label-md font-bold text-xs transition-colors">
           <span class="material-symbols-outlined text-[16px]">qr_code_scanner</span>
           <span>Buka Layar Kios</span>
         </a>
 
         <!-- Notifications -->
-        <button class="relative w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150">
+        <button
+          class="relative w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-150">
           <span class="material-symbols-outlined text-[20px]">notifications</span>
-          <span class="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-1 rounded-full bg-tertiary-container text-white text-[9px] font-bold flex items-center justify-center ring-2 ring-white">
+          <span
+            class="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-1 rounded-full bg-tertiary-container text-white text-[9px] font-bold flex items-center justify-center ring-2 ring-white">
             2
           </span>
         </button>
@@ -272,8 +313,10 @@
         <div class="h-6 w-px bg-outline-variant/40 mx-2"></div>
 
         <!-- User Profile Cluster -->
-        <div class="flex items-center gap-3 pl-1 pr-2 py-1 rounded-xl hover:bg-surface-container cursor-pointer transition-colors duration-150">
-          <div class="w-9 h-9 rounded-full bg-[#6c5ffc] text-white flex items-center justify-center font-bold text-sm ring-2 ring-primary/20">
+        <div
+          class="flex items-center gap-3 pl-1 pr-2 py-1 rounded-xl hover:bg-surface-container cursor-pointer transition-colors duration-150">
+          <div
+            class="w-9 h-9 rounded-full bg-[#6c5ffc] text-white flex items-center justify-center font-bold text-sm ring-2 ring-primary/20">
             AP
           </div>
           <div class="hidden xl:block text-left">
@@ -289,7 +332,7 @@
 
     <!-- Main Content Container -->
     <main class="flex-1 p-space-lg space-y-6">
-      
+
       <!-- ==================== ROW 0: PAGE HEADER & DATE FILTER ==================== -->
       <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -298,15 +341,19 @@
             <span class="material-symbols-outlined text-[14px]">chevron_right</span>
             <span class="text-primary font-semibold">Dashboard Gym</span>
           </div>
-          <h1 class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">Ringkasan Operasional Gym</h1>
-          <p class="font-body-md text-body-md text-on-surface-variant">Monitoring kehadiran real-time, transaksi kasir, dan progres sesi Personal Trainer.</p>
+          <h1 class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">Ringkasan Operasional
+            Gym</h1>
+          <p class="font-body-md text-body-md text-on-surface-variant">Monitoring kehadiran real-time, transaksi kasir,
+            dan progres sesi Personal Trainer.</p>
         </div>
         <div class="flex items-center gap-3">
-          <div class="flex items-center gap-2 bg-surface-container-lowest px-3 py-2 rounded-lg border border-outline-variant/40 shadow-sm text-on-surface-variant font-label-md text-label-md">
+          <div
+            class="flex items-center gap-2 bg-surface-container-lowest px-3 py-2 rounded-lg border border-outline-variant/40 shadow-sm text-on-surface-variant font-label-md text-label-md">
             <span class="material-symbols-outlined text-[18px] text-primary">calendar_today</span>
             <span>15 Oktober 2026 (Hari Ini)</span>
           </div>
-          <button class="flex items-center gap-1.5 bg-primary-container hover:bg-primary text-white px-4 py-2 rounded-lg font-label-md font-semibold transition-all duration-150 shadow-sm shadow-primary/20 active:scale-95">
+          <button
+            class="flex items-center gap-1.5 bg-primary-container hover:bg-primary text-white px-4 py-2 rounded-lg font-label-md font-semibold transition-all duration-150 shadow-sm shadow-primary/20 active:scale-95">
             <span class="material-symbols-outlined text-[18px]">file_download</span>
             <span>Ekspor Laporan</span>
           </button>
@@ -315,18 +362,21 @@
 
       <!-- ==================== ROW 1: TOP METRIC CARDS (Sparklines) ==================== -->
       <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-lg">
-        
+
         <!-- Card 1: Total Pendapatan Bulan Ini -->
-        <div class="bg-surface-container-lowest rounded-xl p-space-lg border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] hover:shadow-[0px_10px_24px_-4px_rgba(108,95,252,0.08)] transition-all duration-200">
+        <div
+          class="bg-surface-container-lowest rounded-xl p-space-lg border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] hover:shadow-[0px_10px_24px_-4px_rgba(108,95,252,0.08)] transition-all duration-200">
           <div class="flex items-center justify-between mb-3">
-            <span class="font-label-md text-label-md font-semibold text-on-surface-variant">Total Pendapatan (Bln Ini)</span>
+            <span class="font-label-md text-label-md font-semibold text-on-surface-variant">Total Pendapatan (Bln
+              Ini)</span>
             <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
               <span class="material-symbols-outlined text-[20px]">payments</span>
             </div>
           </div>
           <div class="flex items-baseline justify-between mb-2">
             <span class="font-headline-lg text-headline-lg font-bold text-on-surface tnum">Rp 184,5 Jt</span>
-            <span class="inline-flex items-center gap-1 text-[11px] font-bold text-[#09ad95] bg-[#09ad95]/10 px-2 py-0.5 rounded-full">
+            <span
+              class="inline-flex items-center gap-1 text-[11px] font-bold text-[#09ad95] bg-[#09ad95]/10 px-2 py-0.5 rounded-full">
               <span class="material-symbols-outlined text-[13px]">trending_up</span>
               +14.2%
             </span>
@@ -340,7 +390,8 @@
                   <stop offset="100%" stop-color="#6c5ffc" stop-opacity="0.0"></stop>
                 </lineargradient>
               </defs>
-              <path d="M0,20 Q15,4 30,14 T60,6 T85,12 T100,2" fill="none" stroke="#6c5ffc" stroke-linecap="round" stroke-width="2.5"></path>
+              <path d="M0,20 Q15,4 30,14 T60,6 T85,12 T100,2" fill="none" stroke="#6c5ffc" stroke-linecap="round"
+                stroke-width="2.5"></path>
               <path d="M0,20 Q15,4 30,14 T60,6 T85,12 T100,2 L100,24 L0,24 Z" fill="url(#grad1)"></path>
             </svg>
             <p class="font-body-sm text-body-sm text-outline mt-1">Langganan Gym + PT + Ritel POS</p>
@@ -348,7 +399,8 @@
         </div>
 
         <!-- Card 2: Total Member Aktif -->
-        <div class="bg-surface-container-lowest rounded-xl p-space-lg border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] hover:shadow-[0px_10px_24px_-4px_rgba(108,95,252,0.08)] transition-all duration-200">
+        <div
+          class="bg-surface-container-lowest rounded-xl p-space-lg border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] hover:shadow-[0px_10px_24px_-4px_rgba(108,95,252,0.08)] transition-all duration-200">
           <div class="flex items-center justify-between mb-3">
             <span class="font-label-md text-label-md font-semibold text-on-surface-variant">Total Member Aktif</span>
             <div class="w-10 h-10 rounded-xl bg-[#09ad95]/10 text-[#09ad95] flex items-center justify-center">
@@ -357,7 +409,8 @@
           </div>
           <div class="flex items-baseline justify-between mb-2">
             <span class="font-headline-lg text-headline-lg font-bold text-on-surface tnum">1.248</span>
-            <span class="inline-flex items-center gap-1 text-[11px] font-bold text-[#09ad95] bg-[#09ad95]/10 px-2 py-0.5 rounded-full">
+            <span
+              class="inline-flex items-center gap-1 text-[11px] font-bold text-[#09ad95] bg-[#09ad95]/10 px-2 py-0.5 rounded-full">
               <span class="material-symbols-outlined text-[13px]">trending_up</span>
               +8.5%
             </span>
@@ -370,7 +423,8 @@
                   <stop offset="100%" stop-color="#09ad95" stop-opacity="0.0"></stop>
                 </lineargradient>
               </defs>
-              <path d="M0,16 Q20,6 40,12 T70,4 T100,2" fill="none" stroke="#09ad95" stroke-linecap="round" stroke-width="2.5"></path>
+              <path d="M0,16 Q20,6 40,12 T70,4 T100,2" fill="none" stroke="#09ad95" stroke-linecap="round"
+                stroke-width="2.5"></path>
               <path d="M0,16 Q20,6 40,12 T70,4 T100,2 L100,24 L0,24 Z" fill="url(#grad2)"></path>
             </svg>
             <p class="font-body-sm text-body-sm text-outline mt-1">42 member baru bergabung minggu ini</p>
@@ -378,17 +432,21 @@
         </div>
 
         <!-- Card 3: Member di Ruangan Saat Ini (In-Gym) -->
-        <div class="bg-surface-container-lowest rounded-xl p-space-lg border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] hover:shadow-[0px_10px_24px_-4px_rgba(108,95,252,0.08)] transition-all duration-200">
+        <div
+          class="bg-surface-container-lowest rounded-xl p-space-lg border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] hover:shadow-[0px_10px_24px_-4px_rgba(108,95,252,0.08)] transition-all duration-200">
           <div class="flex items-center justify-between mb-3">
-            <span class="font-label-md text-label-md font-semibold text-on-surface-variant">Member di Ruangan (In-Gym)</span>
+            <span class="font-label-md text-label-md font-semibold text-on-surface-variant">Member di Ruangan
+              (In-Gym)</span>
             <div class="w-10 h-10 rounded-xl bg-[#03c892]/10 text-[#03c892] flex items-center justify-center relative">
               <span class="material-symbols-outlined text-[20px]">door_open</span>
               <span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#03c892] animate-ping"></span>
             </div>
           </div>
           <div class="flex items-baseline justify-between mb-2">
-            <span class="font-headline-lg text-headline-lg font-bold text-on-surface tnum">48 <span class="text-xs text-outline font-normal">/ 100 Kapasitas</span></span>
-            <span class="inline-flex items-center gap-1 text-[11px] font-bold text-[#03c892] bg-[#03c892]/10 px-2 py-0.5 rounded-full">
+            <span class="font-headline-lg text-headline-lg font-bold text-on-surface tnum">48 <span
+                class="text-xs text-outline font-normal">/ 100 Kapasitas</span></span>
+            <span
+              class="inline-flex items-center gap-1 text-[11px] font-bold text-[#03c892] bg-[#03c892]/10 px-2 py-0.5 rounded-full">
               48% Terisi
             </span>
           </div>
@@ -401,7 +459,8 @@
         </div>
 
         <!-- Card 4: Sesi PT Selesai Bulan Ini -->
-        <div class="bg-surface-container-lowest rounded-xl p-space-lg border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] hover:shadow-[0px_10px_24px_-4px_rgba(108,95,252,0.08)] transition-all duration-200">
+        <div
+          class="bg-surface-container-lowest rounded-xl p-space-lg border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] hover:shadow-[0px_10px_24px_-4px_rgba(108,95,252,0.08)] transition-all duration-200">
           <div class="flex items-center justify-between mb-3">
             <span class="font-label-md text-label-md font-semibold text-on-surface-variant">Sesi PT Selesai</span>
             <div class="w-10 h-10 rounded-xl bg-[#f7b924]/10 text-[#f7b924] flex items-center justify-center">
@@ -409,8 +468,10 @@
             </div>
           </div>
           <div class="flex items-baseline justify-between mb-2">
-            <span class="font-headline-lg text-headline-lg font-bold text-on-surface tnum">384 <span class="text-xs text-outline font-normal">Sesi</span></span>
-            <span class="inline-flex items-center gap-1 text-[11px] font-bold text-[#09ad95] bg-[#09ad95]/10 px-2 py-0.5 rounded-full">
+            <span class="font-headline-lg text-headline-lg font-bold text-on-surface tnum">384 <span
+                class="text-xs text-outline font-normal">Sesi</span></span>
+            <span
+              class="inline-flex items-center gap-1 text-[11px] font-bold text-[#09ad95] bg-[#09ad95]/10 px-2 py-0.5 rounded-full">
               <span class="material-symbols-outlined text-[13px]">trending_up</span>
               +18.0%
             </span>
@@ -423,7 +484,8 @@
                   <stop offset="100%" stop-color="#f7b924" stop-opacity="0.0"></stop>
                 </lineargradient>
               </defs>
-              <path d="M0,14 Q25,4 50,18 T75,8 T100,2" fill="none" stroke="#f7b924" stroke-linecap="round" stroke-width="2.5"></path>
+              <path d="M0,14 Q25,4 50,18 T75,8 T100,2" fill="none" stroke="#f7b924" stroke-linecap="round"
+                stroke-width="2.5"></path>
               <path d="M0,14 Q25,4 50,18 T75,8 T100,2 L100,24 L0,24 Z" fill="url(#grad4)"></path>
             </svg>
             <p class="font-body-sm text-body-sm text-outline mt-1">0% selisih kuota (Zero session leakage)</p>
@@ -434,52 +496,64 @@
       <!-- ==================== ROW 2: SOLID COLORED STAT CARDS ==================== -->
       <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-lg">
         <!-- Solid Violet: Check-in Hari Ini -->
-        <div class="rounded-xl p-space-lg bg-[#6c5ffc] text-white shadow-md relative overflow-hidden flex items-center justify-between">
+        <div
+          class="rounded-xl p-space-lg bg-[#6c5ffc] text-white shadow-md relative overflow-hidden flex items-center justify-between">
           <div class="relative z-10">
-            <p class="text-white/80 font-label-md text-label-md font-medium uppercase tracking-wider mb-1">Check-in Hari Ini</p>
+            <p class="text-white/80 font-label-md text-label-md font-medium uppercase tracking-wider mb-1">Check-in Hari
+              Ini</p>
             <h3 class="font-display text-display font-extrabold text-white leading-none mb-1 tnum">286</h3>
             <span class="text-xs text-white/70 font-body-sm">Puncak kunjungan: 17:00 - 19:30</span>
           </div>
-          <div class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center relative z-10">
+          <div
+            class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center relative z-10">
             <span class="material-symbols-outlined text-[30px] text-white">fingerprint</span>
           </div>
           <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
         </div>
 
         <!-- Solid Teal: Penjualan Ritel Hari Ini -->
-        <div class="rounded-xl p-space-lg bg-[#09ad95] text-white shadow-md relative overflow-hidden flex items-center justify-between">
+        <div
+          class="rounded-xl p-space-lg bg-[#09ad95] text-white shadow-md relative overflow-hidden flex items-center justify-between">
           <div class="relative z-10">
-            <p class="text-white/80 font-label-md text-label-md font-medium uppercase tracking-wider mb-1">Kasir Ritel Hari Ini</p>
+            <p class="text-white/80 font-label-md text-label-md font-medium uppercase tracking-wider mb-1">Kasir Ritel
+              Hari Ini</p>
             <h3 class="font-display text-display font-extrabold text-white leading-none mb-1 tnum">Rp 5,4 Jt</h3>
             <span class="text-xs text-white/70 font-body-sm">62 transaksi produk suplemen & minuman</span>
           </div>
-          <div class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center relative z-10">
+          <div
+            class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center relative z-10">
             <span class="material-symbols-outlined text-[30px] text-white">shopping_cart_checkout</span>
           </div>
           <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
         </div>
 
         <!-- Solid Cyan: Kuota Sesi PT Aktif -->
-        <div class="rounded-xl p-space-lg bg-[#03c892] text-white shadow-md relative overflow-hidden flex items-center justify-between">
+        <div
+          class="rounded-xl p-space-lg bg-[#03c892] text-white shadow-md relative overflow-hidden flex items-center justify-between">
           <div class="relative z-10">
-            <p class="text-white/80 font-label-md text-label-md font-medium uppercase tracking-wider mb-1">Kuota Sesi PT Aktif</p>
+            <p class="text-white/80 font-label-md text-label-md font-medium uppercase tracking-wider mb-1">Kuota Sesi PT
+              Aktif</p>
             <h3 class="font-display text-display font-extrabold text-white leading-none mb-1 tnum">156 Sesi</h3>
             <span class="text-xs text-white/70 font-body-sm">Menunggu penjadwalan latihan</span>
           </div>
-          <div class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center relative z-10">
+          <div
+            class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center relative z-10">
             <span class="material-symbols-outlined text-[30px] text-white">event_available</span>
           </div>
           <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
         </div>
 
         <!-- Solid Sky Blue: Paket Expired Dalam 7 Hari -->
-        <div class="rounded-xl p-space-lg bg-[#05c3fb] text-white shadow-md relative overflow-hidden flex items-center justify-between">
+        <div
+          class="rounded-xl p-space-lg bg-[#05c3fb] text-white shadow-md relative overflow-hidden flex items-center justify-between">
           <div class="relative z-10">
-            <p class="text-white/80 font-label-md text-label-md font-medium uppercase tracking-wider mb-1">Segera Kedaluwarsa</p>
+            <p class="text-white/80 font-label-md text-label-md font-medium uppercase tracking-wider mb-1">Segera
+              Kedaluwarsa</p>
             <h3 class="font-display text-display font-extrabold text-white leading-none mb-1 tnum">18 Member</h3>
             <span class="text-xs text-white/70 font-body-sm">Masa aktif habis &lt; 7 hari</span>
           </div>
-          <div class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center relative z-10">
+          <div
+            class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center relative z-10">
             <span class="material-symbols-outlined text-[30px] text-white">hourglass_bottom</span>
           </div>
           <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
@@ -488,13 +562,15 @@
 
       <!-- ==================== ROW 3: VISUAL DATA & METRICS WIDGETS ==================== -->
       <section class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
-        
+
         <!-- Breakdown Pendapatan Gym (6 cols) -->
-        <div class="lg:col-span-6 bg-surface-container-lowest rounded-xl p-space-lg border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] flex flex-col justify-between">
+        <div
+          class="lg:col-span-6 bg-surface-container-lowest rounded-xl p-space-lg border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between pb-4 border-b border-outline-variant/20 mb-4">
               <div>
-                <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Komposisi Pendapatan Bulanan</h3>
+                <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Komposisi Pendapatan Bulanan
+                </h3>
                 <p class="font-body-sm text-body-sm text-outline">Perbandingan Langganan Gym, Sesi PT, & POS Ritel</p>
               </div>
               <div class="flex items-center gap-3">
@@ -568,7 +644,8 @@
               </div>
             </div>
           </div>
-          <div class="pt-4 border-t border-outline-variant/20 flex items-center justify-between font-label-md text-label-md text-on-surface-variant">
+          <div
+            class="pt-4 border-t border-outline-variant/20 flex items-center justify-between font-label-md text-label-md text-on-surface-variant">
             <span>Rata-rata pertumbuhan: <strong class="text-[#09ad95]">+14.2%</strong> per kuartal</span>
             <a class="text-primary font-semibold hover:underline flex items-center gap-1" href="#">
               Rincian Keuangan <span class="material-symbols-outlined text-[16px]">chevron_right</span>
@@ -577,7 +654,8 @@
         </div>
 
         <!-- Kapasitas & Demografi Member (3 cols) -->
-        <div class="lg:col-span-3 bg-surface-container-lowest rounded-xl p-space-lg border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] flex flex-col justify-between">
+        <div
+          class="lg:col-span-3 bg-surface-container-lowest rounded-xl p-space-lg border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between pb-3 border-b border-outline-variant/20 mb-4">
               <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Demografi & Okupansi</h3>
@@ -588,11 +666,18 @@
             <div class="relative w-36 h-36 mx-auto my-2 flex items-center justify-center">
               <svg class="w-full h-full -rotate-90" viewbox="0 0 36 36">
                 <!-- Background circle -->
-                <path class="text-surface-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+                <path class="text-surface-container"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none"
+                  stroke="currentColor" stroke-width="3.5"></path>
                 <!-- Pria (62%) -->
-                <path class="text-primary-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="62, 100" stroke-linecap="round" stroke-width="3.5"></path>
+                <path class="text-primary-container"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none"
+                  stroke="currentColor" stroke-dasharray="62, 100" stroke-linecap="round" stroke-width="3.5"></path>
                 <!-- Wanita (38%) -->
-                <path class="text-tertiary-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="38, 100" stroke-dashoffset="-62" stroke-linecap="round" stroke-width="3.5"></path>
+                <path class="text-tertiary-container"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none"
+                  stroke="currentColor" stroke-dasharray="38, 100" stroke-dashoffset="-62" stroke-linecap="round"
+                  stroke-width="3.5"></path>
               </svg>
               <div class="absolute flex flex-col items-center justify-center text-center">
                 <span class="font-headline-lg text-headline-lg font-bold text-on-surface leading-none tnum">1.248</span>
@@ -619,18 +704,20 @@
           </div>
 
           <div class="pt-3 border-t border-outline-variant/20 text-center">
-            <span class="font-body-sm text-body-sm text-[#09ad95] font-semibold">Rentang Usia Dominan: 22 - 38 Tahun</span>
+            <span class="font-body-sm text-body-sm text-[#09ad95] font-semibold">Rentang Usia Dominan: 22 - 38
+              Tahun</span>
           </div>
         </div>
 
         <!-- Status Perangkat Keras & Integritas (3 cols) -->
-        <div class="lg:col-span-3 bg-surface-container-lowest rounded-xl p-space-lg border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] flex flex-col justify-between">
+        <div
+          class="lg:col-span-3 bg-surface-container-lowest rounded-xl p-space-lg border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)] flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between pb-3 border-b border-outline-variant/20 mb-4">
               <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Status Perangkat Kios</h3>
               <span class="material-symbols-outlined text-[18px] text-outline">devices</span>
             </div>
-            
+
             <div class="space-y-3.5">
               <!-- Item 1: RFID Scanner -->
               <div class="flex items-center justify-between">
@@ -643,7 +730,8 @@
                     <p class="text-[11px] text-outline">HID Keyboard Mode</p>
                   </div>
                 </div>
-                <span class="inline-flex items-center gap-1 text-[10px] font-bold text-[#09ad95] bg-[#09ad95]/12 px-2 py-0.5 rounded-full">
+                <span
+                  class="inline-flex items-center gap-1 text-[10px] font-bold text-[#09ad95] bg-[#09ad95]/12 px-2 py-0.5 rounded-full">
                   <span class="w-1.5 h-1.5 rounded-full bg-[#09ad95]"></span> Ready
                 </span>
               </div>
@@ -659,7 +747,8 @@
                     <p class="text-[11px] text-outline">640x480 Canvas API</p>
                   </div>
                 </div>
-                <span class="inline-flex items-center gap-1 text-[10px] font-bold text-[#09ad95] bg-[#09ad95]/12 px-2 py-0.5 rounded-full">
+                <span
+                  class="inline-flex items-center gap-1 text-[10px] font-bold text-[#09ad95] bg-[#09ad95]/12 px-2 py-0.5 rounded-full">
                   <span class="w-1.5 h-1.5 rounded-full bg-[#09ad95]"></span> Active
                 </span>
               </div>
@@ -675,7 +764,8 @@
                     <p class="text-[11px] text-outline">USB ESC/POS 58mm</p>
                   </div>
                 </div>
-                <span class="inline-flex items-center gap-1 text-[10px] font-bold text-[#09ad95] bg-[#09ad95]/12 px-2 py-0.5 rounded-full">
+                <span
+                  class="inline-flex items-center gap-1 text-[10px] font-bold text-[#09ad95] bg-[#09ad95]/12 px-2 py-0.5 rounded-full">
                   <span class="w-1.5 h-1.5 rounded-full bg-[#09ad95]"></span> Online
                 </span>
               </div>
@@ -696,7 +786,8 @@
             </div>
           </div>
 
-          <button class="w-full mt-4 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-label-sm font-bold transition-colors flex items-center justify-center gap-1">
+          <button
+            class="w-full mt-4 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-label-sm font-bold transition-colors flex items-center justify-center gap-1">
             <span class="material-symbols-outlined text-[16px]">refresh</span>
             <span>Uji Diagnostik Kios</span>
           </button>
@@ -705,24 +796,32 @@
 
       <!-- ==================== ROW 4: DATA TABLE (LOG KEHADIRAN RFID REAL-TIME) ==================== -->
       <section class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
-        
+
         <!-- Tabel Log Kehadiran Gerbang (8 cols) -->
-        <div class="lg:col-span-8 bg-surface-container-lowest rounded-xl p-space-lg border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)]">
+        <div
+          class="lg:col-span-8 bg-surface-container-lowest rounded-xl p-space-lg border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)]">
           <div class="flex items-center justify-between pb-4 border-b border-outline-variant/20 mb-4">
             <div>
               <div class="flex items-center gap-2">
-                <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Log Kehadiran Gerbang Real-time</h3>
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#09ad95]/12 text-[#09ad95] animate-pulse">
-                  RFID + Webcam Sync
+                <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Log Kehadiran Gerbang Real-time
+                </h3>
+                <span
+                  class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#09ad95]/12 text-[#09ad95] animate-pulse">
+                  Sync
                 </span>
               </div>
-              <p class="font-body-sm text-body-sm text-outline">Rekaman pemindaian RFID dan tangkapan webcam otomatis di pintu masuk.</p>
+              <p class="font-body-sm text-body-sm text-outline">Rekaman pemindaian RFID dan tangkapan webcam otomatis di
+                pintu masuk.</p>
             </div>
             <div class="flex items-center gap-2">
-              <button class="p-1.5 rounded-lg border border-outline-variant/30 text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Filter Status">
+              <button
+                class="p-1.5 rounded-lg border border-outline-variant/30 text-outline hover:text-on-surface hover:bg-surface-container transition-colors"
+                title="Filter Status">
                 <span class="material-symbols-outlined text-[18px]">filter_list</span>
               </button>
-              <button class="p-1.5 rounded-lg border border-outline-variant/30 text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Muat Ulang">
+              <button
+                class="p-1.5 rounded-lg border border-outline-variant/30 text-outline hover:text-on-surface hover:bg-surface-container transition-colors"
+                title="Muat Ulang">
                 <span class="material-symbols-outlined text-[18px]">refresh</span>
               </button>
             </div>
@@ -741,14 +840,18 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-[#f0f3f8] text-body-md font-body-md">
-                
+
                 <!-- Row 1 -->
                 <tr class="hover:bg-[#fbfcfe] transition-colors duration-150">
                   <td class="py-3 px-3 font-semibold text-on-surface flex items-center gap-3">
                     <!-- Webcam snapshot thumbnail -->
-                    <div class="relative w-10 h-10 rounded-lg overflow-hidden border border-[#e9edf4] bg-slate-100 flex-shrink-0">
-                      <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face" alt="Webcam Snapshot"/>
-                      <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#09ad95] border border-white rounded-full"></span>
+                    <div
+                      class="relative w-10 h-10 rounded-lg overflow-hidden border border-[#e9edf4] bg-slate-100 flex-shrink-0">
+                      <img class="w-full h-full object-cover"
+                        src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face"
+                        alt="Webcam Snapshot" />
+                      <span
+                        class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#09ad95] border border-white rounded-full"></span>
                     </div>
                     <div>
                       <p class="font-label-md text-xs font-bold text-on-surface leading-tight">Clara Amanda</p>
@@ -756,7 +859,8 @@
                     </div>
                   </td>
                   <td class="py-3 px-3">
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm font-bold bg-primary/10 text-primary">
+                    <span
+                      class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm font-bold bg-primary/10 text-primary">
                       Gym Regular + PT (12 Sesi)
                     </span>
                   </td>
@@ -764,7 +868,8 @@
                     17:42:15 <span class="text-outline text-[10px] block">1 menit lalu</span>
                   </td>
                   <td class="py-3 px-3">
-                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-bold bg-[#09ad95]/12 text-[#09ad95]">
+                    <span
+                      class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-bold bg-[#09ad95]/12 text-[#09ad95]">
                       <span class="material-symbols-outlined text-[13px]">login</span>
                       IN (Masuk)
                     </span>
@@ -779,9 +884,13 @@
                 <!-- Row 2 -->
                 <tr class="hover:bg-[#fbfcfe] transition-colors duration-150">
                   <td class="py-3 px-3 font-semibold text-on-surface flex items-center gap-3">
-                    <div class="relative w-10 h-10 rounded-lg overflow-hidden border border-[#e9edf4] bg-slate-100 flex-shrink-0">
-                      <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" alt="Webcam Snapshot"/>
-                      <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#05c3fb] border border-white rounded-full"></span>
+                    <div
+                      class="relative w-10 h-10 rounded-lg overflow-hidden border border-[#e9edf4] bg-slate-100 flex-shrink-0">
+                      <img class="w-full h-full object-cover"
+                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face"
+                        alt="Webcam Snapshot" />
+                      <span
+                        class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#05c3fb] border border-white rounded-full"></span>
                     </div>
                     <div>
                       <p class="font-label-md text-xs font-bold text-on-surface leading-tight">Budi Pratama</p>
@@ -789,7 +898,8 @@
                     </div>
                   </td>
                   <td class="py-3 px-3">
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm font-bold bg-[#05c3fb]/10 text-[#05c3fb]">
+                    <span
+                      class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm font-bold bg-[#05c3fb]/10 text-[#05c3fb]">
                       VIP All-Access 6 Bln
                     </span>
                   </td>
@@ -797,7 +907,8 @@
                     17:38:02 <span class="text-outline text-[10px] block">5 menit lalu</span>
                   </td>
                   <td class="py-3 px-3">
-                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-bold bg-[#05c3fb]/12 text-[#05c3fb]">
+                    <span
+                      class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-bold bg-[#05c3fb]/12 text-[#05c3fb]">
                       <span class="material-symbols-outlined text-[13px]">logout</span>
                       OUT (Keluar)
                     </span>
@@ -812,9 +923,13 @@
                 <!-- Row 3 -->
                 <tr class="hover:bg-[#fbfcfe] transition-colors duration-150">
                   <td class="py-3 px-3 font-semibold text-on-surface flex items-center gap-3">
-                    <div class="relative w-10 h-10 rounded-lg overflow-hidden border border-[#e9edf4] bg-slate-100 flex-shrink-0">
-                      <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face" alt="Webcam Snapshot"/>
-                      <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#09ad95] border border-white rounded-full"></span>
+                    <div
+                      class="relative w-10 h-10 rounded-lg overflow-hidden border border-[#e9edf4] bg-slate-100 flex-shrink-0">
+                      <img class="w-full h-full object-cover"
+                        src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face"
+                        alt="Webcam Snapshot" />
+                      <span
+                        class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#09ad95] border border-white rounded-full"></span>
                     </div>
                     <div>
                       <p class="font-label-md text-xs font-bold text-on-surface leading-tight">Reza Firmansyah</p>
@@ -822,7 +937,8 @@
                     </div>
                   </td>
                   <td class="py-3 px-3">
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm font-bold bg-primary/10 text-primary">
+                    <span
+                      class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm font-bold bg-primary/10 text-primary">
                       Reguler Bulanan
                     </span>
                   </td>
@@ -830,7 +946,8 @@
                     17:25:44 <span class="text-outline text-[10px] block">17 menit lalu</span>
                   </td>
                   <td class="py-3 px-3">
-                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-bold bg-[#09ad95]/12 text-[#09ad95]">
+                    <span
+                      class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-bold bg-[#09ad95]/12 text-[#09ad95]">
                       <span class="material-symbols-outlined text-[13px]">login</span>
                       IN (Masuk)
                     </span>
@@ -845,9 +962,13 @@
                 <!-- Row 4 -->
                 <tr class="hover:bg-[#fbfcfe] transition-colors duration-150">
                   <td class="py-3 px-3 font-semibold text-on-surface flex items-center gap-3">
-                    <div class="relative w-10 h-10 rounded-lg overflow-hidden border border-[#e9edf4] bg-slate-100 flex-shrink-0">
-                      <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face" alt="Webcam Snapshot"/>
-                      <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#09ad95] border border-white rounded-full"></span>
+                    <div
+                      class="relative w-10 h-10 rounded-lg overflow-hidden border border-[#e9edf4] bg-slate-100 flex-shrink-0">
+                      <img class="w-full h-full object-cover"
+                        src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face"
+                        alt="Webcam Snapshot" />
+                      <span
+                        class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#09ad95] border border-white rounded-full"></span>
                     </div>
                     <div>
                       <p class="font-label-md text-xs font-bold text-on-surface leading-tight">Siti Rahmawati</p>
@@ -855,7 +976,8 @@
                     </div>
                   </td>
                   <td class="py-3 px-3">
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm font-bold bg-[#f7b924]/15 text-[#b58004]">
+                    <span
+                      class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm font-bold bg-[#f7b924]/15 text-[#b58004]">
                       PT Paket 24 Sesi (Sisa 9)
                     </span>
                   </td>
@@ -863,7 +985,8 @@
                     17:10:19 <span class="text-outline text-[10px] block">32 menit lalu</span>
                   </td>
                   <td class="py-3 px-3">
-                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-bold bg-[#09ad95]/12 text-[#09ad95]">
+                    <span
+                      class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-bold bg-[#09ad95]/12 text-[#09ad95]">
                       <span class="material-symbols-outlined text-[13px]">login</span>
                       IN (Masuk)
                     </span>
@@ -878,22 +1001,27 @@
             </table>
           </div>
 
-          <div class="flex items-center justify-between pt-4 mt-2 border-t border-outline-variant/20 font-label-md text-label-md">
+          <div
+            class="flex items-center justify-between pt-4 mt-2 border-t border-outline-variant/20 font-label-md text-label-md">
             <span class="text-outline text-xs">Menampilkan 4 dari 286 log hari ini</span>
             <div class="flex items-center gap-1">
-              <button class="px-2.5 py-1 text-xs rounded border border-outline-variant/40 text-outline hover:bg-surface-container">Prev</button>
+              <button
+                class="px-2.5 py-1 text-xs rounded border border-outline-variant/40 text-outline hover:bg-surface-container">Prev</button>
               <button class="px-2.5 py-1 text-xs rounded bg-primary text-white font-bold">1</button>
-              <button class="px-2.5 py-1 text-xs rounded border border-outline-variant/40 text-outline hover:bg-surface-container">2</button>
-              <button class="px-2.5 py-1 text-xs rounded border border-outline-variant/40 text-outline hover:bg-surface-container">Next</button>
+              <button
+                class="px-2.5 py-1 text-xs rounded border border-outline-variant/40 text-outline hover:bg-surface-container">2</button>
+              <button
+                class="px-2.5 py-1 text-xs rounded border border-outline-variant/40 text-outline hover:bg-surface-container">Next</button>
             </div>
           </div>
         </div>
 
         <!-- Aktivitas Personal Trainer & Void Supervisor (4 cols) -->
         <div class="lg:col-span-4 space-y-space-lg">
-          
+
           <!-- Widget Log Sesi Personal Trainer Terkini -->
-          <div class="bg-surface-container-lowest rounded-xl p-space-lg border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)]">
+          <div
+            class="bg-surface-container-lowest rounded-xl p-space-lg border border-[#e9edf4] shadow-[0px_4px_16px_-2px_rgba(108,95,252,0.04),0px_2px_6px_-1px_rgba(22,28,45,0.05)]">
             <div class="flex items-center justify-between pb-3 border-b border-outline-variant/20 mb-3">
               <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Sesi PT Terbaru</h3>
               <span class="text-xs bg-[#f7b924]/15 text-[#b58004] px-2 py-0.5 rounded-full font-bold">PT Logs</span>
@@ -903,7 +1031,8 @@
               <!-- Item PT 1 -->
               <div class="flex items-start justify-between">
                 <div class="flex items-start gap-2.5">
-                  <div class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-xs mt-0.5">
+                  <div
+                    class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-xs mt-0.5">
                     DH
                   </div>
                   <div>
@@ -918,7 +1047,8 @@
               <!-- Item PT 2 -->
               <div class="flex items-start justify-between">
                 <div class="flex items-start gap-2.5">
-                  <div class="w-8 h-8 rounded-lg bg-[#09ad95]/10 text-[#09ad95] flex items-center justify-center font-bold text-xs mt-0.5">
+                  <div
+                    class="w-8 h-8 rounded-lg bg-[#09ad95]/10 text-[#09ad95] flex items-center justify-center font-bold text-xs mt-0.5">
                     AY
                   </div>
                   <div>
@@ -933,7 +1063,8 @@
               <!-- Item PT 3 -->
               <div class="flex items-start justify-between">
                 <div class="flex items-start gap-2.5">
-                  <div class="w-8 h-8 rounded-lg bg-[#05c3fb]/10 text-[#05c3fb] flex items-center justify-center font-bold text-xs mt-0.5">
+                  <div
+                    class="w-8 h-8 rounded-lg bg-[#05c3fb]/10 text-[#05c3fb] flex items-center justify-center font-bold text-xs mt-0.5">
                     DH
                   </div>
                   <div>
@@ -946,7 +1077,8 @@
               </div>
             </div>
 
-            <a href="#" class="block text-center mt-3 pt-2.5 border-t border-outline-variant/20 text-xs font-bold text-primary hover:underline">
+            <a href="#"
+              class="block text-center mt-3 pt-2.5 border-t border-outline-variant/20 text-xs font-bold text-primary hover:underline">
               Buka Portal Personal Trainer &rarr;
             </a>
           </div>
@@ -954,13 +1086,15 @@
           <!-- Alert Otorisasi Void Supervisor -->
           <div class="rounded-xl p-space-md bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
             <div class="flex items-start gap-2.5">
-              <div class="w-7 h-7 rounded-lg bg-[#f7b924] text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div
+                class="w-7 h-7 rounded-lg bg-[#f7b924] text-white flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span class="material-symbols-outlined text-[16px]">security</span>
               </div>
               <div class="flex-1">
                 <p class="font-label-md text-xs font-bold text-amber-900 leading-tight">Audit Keamanan Void POS</p>
                 <p class="text-[11px] text-amber-700 mt-1 leading-snug">
-                  Semua pembatalan kasir wajib otorisasi PIN Supervisor. Hari ini: <strong>0 Void</strong> (100% kepatuhan).
+                  Semua pembatalan kasir wajib otorisasi PIN Supervisor. Hari ini: <strong>0 Void</strong> (100%
+                  kepatuhan).
                 </p>
               </div>
             </div>
@@ -975,4 +1109,5 @@
   </div>
 
 </body>
+
 </html>

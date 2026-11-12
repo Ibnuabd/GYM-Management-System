@@ -138,6 +138,16 @@
         </div>
       </div>
 
+      <!-- Link to Member Self-Service Portal -->
+      <div class="mt-5 pt-4 text-center border-t border-[#e9edf4]">
+        <p class="text-xs text-[#777587]">
+          Anggota Gym Terdaftar?
+          <a href="/portal/login" class="font-bold text-[#09ad95] hover:underline ml-1">
+            Masuk ke Portal Member &rarr;
+          </a>
+        </p>
+      </div>
+
     </div>
 
     <!-- Security Footnote -->

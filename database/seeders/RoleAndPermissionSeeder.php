@@ -30,6 +30,10 @@ class RoleAndPermissionSeeder extends Seeder
             'manage_pt_sessions',
             'view_reports',
             'manage_users',
+            'class_manage',
+            'class_enroll',
+            'manage_packages', // tambah/ubah/hapus paket & harga (admin, supervisor)
+            'manage_products', // tambah/ubah/hapus produk, harga & stok (admin, supervisor)
         ];
 
         foreach ($permissions as $permission) {
@@ -50,6 +54,8 @@ class RoleAndPermissionSeeder extends Seeder
             'pos_cashier',
             'pos_void',
             'view_reports',
+            'manage_packages',
+            'manage_products',
         ]);
 
         // 3. Role: CS (Frontliner: Member registration, Attendance kiosk, POS cashier)
@@ -77,6 +83,7 @@ class RoleAndPermissionSeeder extends Seeder
             [
                 'name' => 'Alexander Pierce (Admin)',
                 'password' => Hash::make('password'),
+                'supervisor_pin' => Hash::make('123456'),
             ]
         );
         $admin->syncRoles([$adminRole]);
@@ -87,6 +94,7 @@ class RoleAndPermissionSeeder extends Seeder
             [
                 'name' => 'Bambang Supriyadi (Supervisor)',
                 'password' => Hash::make('password'),
+                'supervisor_pin' => Hash::make('123456'),
             ]
         );
         $supervisor->syncRoles([$supervisorRole]);

@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attendance;
+use App\Models\PosTransaction;
+use App\Models\PtSessionLog;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -33,7 +37,24 @@ class DashboardController extends Controller
         ];
 
         // Real-time attendance log preview
-        $recentAttendances = [
+        $realAttendances = Attendance::with(['member', 'subscription.package'])
+            ->today()
+            ->latest('scanned_at')
+            ->take(10)
+            ->get()
+            ->map(fn ($att) => [
+                'id' => $att->id,
+                'member_name' => $att->member?->full_name ?? 'Member',
+                'member_code' => $att->member?->member_code ?? '-',
+                'rfid_uid' => $att->rfid_uid,
+                'package_name' => $att->subscription?->package?->name ?? 'Paket Gym Aktif',
+                'snapshot_url' => $att->snapshot_url,
+                'scanned_time' => $att->scanned_time,
+                'time_ago' => $att->time_ago,
+                'status' => $att->status,
+            ]);
+
+        $recentAttendances = $realAttendances->isNotEmpty() ? $realAttendances->all() : [
             [
                 'id' => 1,
                 'member_name' => 'Clara Amanda',
@@ -80,8 +101,46 @@ class DashboardController extends Controller
             ],
         ];
 
-        // Recent PT session logs
-        $recentPtSessions = [
+        $todayCheckinsCount = Attendance::today()->where('status', 'IN')->count();
+        if ($todayCheckinsCount > 0) {
+            $metrics['today_checkins'] = $todayCheckinsCount;
+        }
+
+        $todayPosSales = (float) PosTransaction::today()->completed()->sum('total_amount');
+        $todayPosCount = PosTransaction::today()->completed()->count();
+        if ($todayPosCount > 0) {
+            $metrics['pos_sales_today'] = 'Rp '.number_format($todayPosSales, 0, ',', '.');
+            $metrics['pos_transactions_today'] = $todayPosCount;
+        }
+
+        // Recent PT session logs (queried live from DB with fallback)
+        $realPtSessions = PtSessionLog::with(['member', 'trainer', 'subscription'])
+            ->latest('session_date')
+            ->take(5)
+            ->get()
+            ->map(function (PtSessionLog $log) {
+                $trainerName = $log->trainer?->name ?? 'Coach Gym';
+                $words = explode(' ', $trainerName);
+                $initials = count($words) >= 2
+                    ? strtoupper(substr($words[0], 0, 1).substr($words[1], 0, 1))
+                    : strtoupper(substr($trainerName, 0, 2));
+
+                $sub = $log->subscription;
+                $remaining = $sub ? max(0, $sub->total_sessions - $sub->used_sessions) : 0;
+                $total = $sub?->total_sessions ?? 0;
+
+                return [
+                    'id' => $log->id,
+                    'member_name' => $log->member?->full_name ?? 'Member',
+                    'trainer_name' => $trainerName,
+                    'trainer_initials' => $initials,
+                    'workout_focus' => $log->muscle_focus,
+                    'remaining_sessions' => "{$remaining} / {$total} Sesi",
+                    'time_ago' => $log->session_date ? Carbon::parse($log->session_date)->diffForHumans() : '-',
+                ];
+            });
+
+        $recentPtSessions = $realPtSessions->isNotEmpty() ? $realPtSessions->all() : [
             [
                 'id' => 1,
                 'member_name' => 'Clara Amanda',
@@ -124,7 +183,7 @@ class DashboardController extends Controller
             'recentAttendances' => $recentAttendances,
             'recentPtSessions' => $recentPtSessions,
             'hardwareStatus' => $hardwareStatus,
-            'userRole' => $user->getRoleNames()->first() ?? 'staff',
+            'userRole' => method_exists($user, 'getRoleNames') ? ($user->getRoleNames()->first() ?? 'staff') : 'staff',
         ]);
     }
 }

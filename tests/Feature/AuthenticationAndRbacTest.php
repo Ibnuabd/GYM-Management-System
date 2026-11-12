@@ -9,6 +9,8 @@ use Tests\TestCase;
 
 class AuthenticationAndRbacTest extends TestCase
 {
+    use RefreshDatabase;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -79,7 +81,7 @@ class AuthenticationAndRbacTest extends TestCase
         $this->actingAs($supervisor)->get('/kiosk')->assertStatus(200);
         $this->actingAs($supervisor)->get('/pos')->assertStatus(200);
         $this->actingAs($supervisor)->get('/reports')->assertStatus(200);
-        
+
         // Supervisor cannot manage users
         $this->actingAs($supervisor)->get('/users')->assertStatus(403);
     }

@@ -50,13 +50,16 @@
   width: 5px;
   height: 5px;
 }
+
 .custom-scroll::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .custom-scroll::-webkit-scrollbar-thumb {
   background: #e2e7f1;
   border-radius: 4px;
 }
+
 .custom-scroll::-webkit-scrollbar-thumb:hover {
   background: #c8c4d8;
 }

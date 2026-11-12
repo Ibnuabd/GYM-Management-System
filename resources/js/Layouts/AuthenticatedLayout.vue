@@ -51,9 +51,20 @@
                 v-if="hasPermission('pos_cashier')"
                 :href="route('pos')"
                 class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[#474555] hover:bg-[#e8eeff] hover:text-[#5242e2] transition-colors duration-150 font-medium text-xs"
+                :class="$page.url.startsWith('/pos') ? 'bg-[#6c5ffc] text-white shadow-sm font-semibold' : ''"
               >
-                <span class="material-symbols-outlined text-[18px] text-[#6c5ffc]">point_of_sale</span>
+                <span class="material-symbols-outlined text-[18px]" :class="$page.url.startsWith('/pos') ? 'text-white' : 'text-[#6c5ffc]'">point_of_sale</span>
                 <span>Kasir POS & Ritel</span>
+              </Link>
+
+              <Link 
+                v-if="hasPermission('pos_cashier')"
+                :href="route('products.index')"
+                class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[#474555] hover:bg-[#e8eeff] hover:text-[#5242e2] transition-colors duration-150 font-medium text-xs"
+                :class="$page.url.startsWith('/products') ? 'bg-[#6c5ffc] text-white shadow-sm font-semibold' : ''"
+              >
+                <span class="material-symbols-outlined text-[18px]" :class="$page.url.startsWith('/products') ? 'text-white' : 'text-[#5242e2]'">inventory_2</span>
+                <span>Katalog Produk & Stok</span>
               </Link>
 
               <Link 
@@ -71,20 +82,22 @@
           <div v-if="hasAnyPermission(['manage_members', 'manage_subscriptions'])">
             <span class="block px-3 mb-2 text-[10px] uppercase tracking-wider text-[#777587] font-bold">KEANGGOTAAN</span>
             <div class="space-y-1">
-              <a 
-                href="#members" 
-                class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[#474555] hover:bg-[#e8eeff] hover:text-[#5242e2] transition-colors duration-150 font-medium text-xs"
+              <Link 
+                :href="route('members.index')" 
+                class="flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-xs transition-colors duration-150"
+                :class="$page.url.startsWith('/members') ? 'bg-[#6c5ffc] text-white shadow-sm font-semibold' : 'text-[#474555] hover:bg-[#e8eeff] hover:text-[#5242e2]'"
               >
-                <span class="material-symbols-outlined text-[18px] text-[#03c892]">group</span>
+                <span class="material-symbols-outlined text-[18px]" :class="$page.url.startsWith('/members') ? 'text-white' : 'text-[#03c892]'">group</span>
                 <span>Data Member</span>
-              </a>
-              <a 
-                href="#packages" 
-                class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[#474555] hover:bg-[#e8eeff] hover:text-[#5242e2] transition-colors duration-150 font-medium text-xs"
+              </Link>
+              <Link 
+                :href="route('packages.index')" 
+                class="flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-xs transition-colors duration-150"
+                :class="$page.url.startsWith('/packages') ? 'bg-[#6c5ffc] text-white shadow-sm font-semibold' : 'text-[#474555] hover:bg-[#e8eeff] hover:text-[#5242e2]'"
               >
-                <span class="material-symbols-outlined text-[18px] text-[#05c3fb]">card_membership</span>
+                <span class="material-symbols-outlined text-[18px]" :class="$page.url.startsWith('/packages') ? 'text-white' : 'text-[#05c3fb]'">card_membership</span>
                 <span>Paket Langganan</span>
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -94,9 +107,10 @@
             <div class="space-y-1">
               <Link 
                 :href="route('reports')" 
-                class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[#474555] hover:bg-[#e8eeff] hover:text-[#5242e2] transition-colors duration-150 font-medium text-xs"
+                class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors duration-150 font-medium text-xs"
+                :class="$page.url.startsWith('/reports') ? 'bg-[#6c5ffc] text-white shadow-sm font-semibold' : 'text-[#474555] hover:bg-[#e8eeff] hover:text-[#5242e2]'"
               >
-                <span class="material-symbols-outlined text-[18px] text-[#6c5ffc]">query_stats</span>
+                <span class="material-symbols-outlined text-[18px]" :class="$page.url.startsWith('/reports') ? 'text-white' : 'text-[#6c5ffc]'">query_stats</span>
                 <span>Laporan Pendapatan</span>
               </Link>
               <a 
@@ -144,21 +158,66 @@
       <!-- Top Header Bar -->
       <header class="sticky top-0 z-40 h-16 w-full bg-white border-b border-[#c8c4d8]/30 px-6 flex items-center justify-between shadow-sm">
         
-        <!-- Search Member Input -->
-        <div class="flex items-center gap-3 w-80">
+        <!-- Search Member Input with Quick Search Popup -->
+        <div class="relative w-80">
           <div class="relative w-full">
             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-[#777587]">search</span>
             <input 
+              v-model="headerSearchQuery"
+              @input="handleHeaderSearch"
+              @keydown.enter="submitHeaderSearch"
+              @focus="isSearchFocused = true"
               type="text" 
               placeholder="Cari Member (Nama, RFID, HP)..." 
-              class="w-full h-[38px] pl-9 pr-3 text-xs rounded-lg bg-[#f0f3fb]/70 border border-[#c8c4d8]/40 focus:border-[#6c5ffc] focus:ring-2 focus:ring-[#6c5ffc]/20 transition-all text-[#121c2c] placeholder:text-[#777587] outline-none"
+              class="w-full h-[38px] pl-9 pr-8 text-xs rounded-lg bg-[#f0f3fb]/70 border border-[#c8c4d8]/40 focus:border-[#6c5ffc] focus:bg-white focus:ring-2 focus:ring-[#6c5ffc]/20 transition-all text-[#121c2c] placeholder:text-[#777587] outline-none"
             />
+            <span v-if="isHeaderSearching" class="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 border-2 border-[#6c5ffc] border-t-transparent rounded-full animate-spin"></span>
+          </div>
+
+          <!-- Quick Results Dropdown -->
+          <div 
+            v-if="isSearchFocused && (headerSearchResults.length > 0 || isHeaderSearching)"
+            class="absolute left-0 right-0 top-full mt-1.5 bg-white rounded-xl shadow-xl border border-[#e9edf4] py-2 z-50 max-h-72 overflow-y-auto"
+          >
+            <div 
+              v-for="res in headerSearchResults" 
+              :key="res.id"
+              @mousedown="navigateToMember(res.id)"
+              class="px-3 py-2 hover:bg-[#f0f3fb] cursor-pointer flex items-center justify-between transition-colors text-xs"
+            >
+              <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-lg bg-[#6c5ffc]/15 text-[#5242e2] flex items-center justify-center font-bold text-[10px]">
+                  {{ res.full_name.substring(0, 2).toUpperCase() }}
+                </div>
+                <div>
+                  <p class="font-bold text-[#121c2c] leading-tight">{{ res.full_name }}</p>
+                  <p class="text-[10px] text-[#777587] font-mono leading-tight">{{ res.member_code }} • {{ res.phone }}</p>
+                </div>
+              </div>
+              <span 
+                class="text-[9px] font-bold px-1.5 py-0.5 rounded"
+                :class="res.has_active_subscription ? 'bg-[#09ad95]/15 text-[#09ad95]' : 'bg-gray-100 text-gray-500'"
+              >
+                {{ res.has_active_subscription ? 'Aktif' : 'Non-aktif' }}
+              </span>
+            </div>
           </div>
         </div>
 
         <!-- Action Items & User Profile -->
         <div class="flex items-center gap-3">
           
+          <!-- Quick Kiosk Gate Button -->
+          <Link 
+            v-if="hasPermission('scan_attendance')"
+            :href="route('kiosk')"
+            class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#09ad95]/10 text-[#09ad95] hover:bg-[#09ad95]/20 font-bold text-xs transition-colors"
+            title="Buka Kios Kehadiran Mandiri"
+          >
+            <span class="material-symbols-outlined text-[16px]">qr_code_scanner</span>
+            <span>Buka Layar Kios</span>
+          </Link>
+
           <!-- Role Badge -->
           <span 
             class="text-[10px] uppercase font-bold px-2.5 py-1 rounded-full border tracking-wider"
@@ -211,13 +270,68 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { usePage, router, Link } from '@inertiajs/vue3';
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
 const roles = computed(() => user.value?.roles || []);
 const permissions = computed(() => user.value?.permissions || []);
+
+// Header Quick Search State
+const headerSearchQuery = ref('');
+const headerSearchResults = ref([]);
+const isHeaderSearching = ref(false);
+const isSearchFocused = ref(false);
+let headerSearchTimer = null;
+
+const handleHeaderSearch = () => {
+  const query = headerSearchQuery.value.trim();
+  if (!query) {
+    headerSearchResults.value = [];
+    return;
+  }
+
+  clearTimeout(headerSearchTimer);
+  headerSearchTimer = setTimeout(async () => {
+    isHeaderSearching.value = true;
+    try {
+      const res = await fetch(`${route('members.quick-search')}?q=${encodeURIComponent(query)}`);
+      headerSearchResults.value = await res.json();
+    } catch (err) {
+      console.error('Quick search error:', err);
+    } finally {
+      isHeaderSearching.value = false;
+    }
+  }, 250);
+};
+
+const submitHeaderSearch = () => {
+  if (headerSearchQuery.value.trim()) {
+    isSearchFocused.value = false;
+    router.get(route('members.index'), { search: headerSearchQuery.value.trim() });
+  }
+};
+
+const navigateToMember = (memberId) => {
+  isSearchFocused.value = false;
+  headerSearchQuery.value = '';
+  router.visit(route('members.show', memberId));
+};
+
+const closeDropdownOnOutsideClick = (e) => {
+  if (!e.target.closest('.relative.w-80')) {
+    isSearchFocused.value = false;
+  }
+};
+
+onMounted(() => {
+  window.addEventListener('click', closeDropdownOnOutsideClick);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('click', closeDropdownOnOutsideClick);
+});
 
 const primaryRole = computed(() => {
   if (roles.value.includes('admin')) return 'Admin';
