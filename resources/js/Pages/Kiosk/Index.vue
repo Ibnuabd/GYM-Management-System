@@ -369,7 +369,7 @@
           <!-- Feed Header -->
           <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900">
             <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-[20px] text-cyan-400">history_toggle_drop_down</span>
+              <span class="material-symbols-outlined text-[20px] text-cyan-400">history</span>
               <h3 class="text-xs font-bold text-white uppercase tracking-wider">Log Kehadiran Hari Ini</h3>
               <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
             </div>
@@ -502,6 +502,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { Link } from '@inertiajs/vue3';
+import { route } from '@/route';
 
 const props = defineProps({
   recentAttendances: {

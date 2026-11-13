@@ -294,6 +294,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { usePage, router, Link } from '@inertiajs/vue3';
+import { route } from '@/route';
 
 // ==================== POP-UP NOTIFIKASI (TOAST) ====================
 // Server mengirim pesan lewat flash: ->with('success' | 'error' | 'info', 'pesan').

@@ -53,14 +53,19 @@
           </div>
 
           <!-- Category filter -->
-          <select 
-            v-model="selectedCategory"
-            @change="applyFilters"
-            class="h-10 px-3 rounded-xl border border-[#c8c4d8]/40 text-xs text-[#121c2c] bg-[#f8fafc] focus:bg-white outline-none"
-          >
-            <option value="">Semua Kategori</option>
-            <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
-          </select>
+          <!-- appearance-none: panah bawaan browser dimatikan, diganti ikon "expand_more"
+               supaya ada jarak yang rapi di kanan dan tampilannya sama di semua browser. -->
+          <div class="relative shrink-0">
+            <select
+              v-model="selectedCategory"
+              @change="applyFilters"
+              class="appearance-none h-10 min-w-[160px] pl-3 pr-9 rounded-xl border border-[#c8c4d8]/40 text-xs text-[#121c2c] bg-[#f8fafc] focus:bg-white focus:border-[#5242e2] outline-none cursor-pointer"
+            >
+              <option value="">Semua Kategori</option>
+              <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+            </select>
+            <span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">expand_more</span>
+          </div>
 
           <!-- Low stock checkbox toggle -->
           <label class="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer ml-1">
@@ -370,6 +375,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
+import { route } from '@/route';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 // Hanya user dengan permission "manage_products" (admin & supervisor) yang melihat tombol tambah/ubah/hapus.

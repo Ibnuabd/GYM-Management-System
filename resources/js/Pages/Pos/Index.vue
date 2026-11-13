@@ -622,12 +622,15 @@
     </div>
 
     <!-- ==================== MODAL 1: RECEIPT / STRUK TRANSAKSI ==================== -->
-    <div 
-      v-if="activeReceipt" 
-      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+    <!-- Teleport: modal dipindah langsung ke <body>, supaya saat dicetak
+         semua elemen lain bisa disembunyikan (lihat style cetak di bawah). -->
+    <Teleport to="body">
+    <div
+      v-if="activeReceipt"
+      class="receipt-modal fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
       @click.self="activeReceipt = null"
     >
-      <div class="bg-white rounded-3xl max-w-sm w-full overflow-hidden shadow-2xl border border-[#e9edf4] animate-scaleIn">
+      <div class="receipt-card bg-white rounded-3xl max-w-sm w-full overflow-hidden shadow-2xl border border-[#e9edf4] animate-scaleIn">
         
         <!-- Thermal Receipt Body -->
         <div id="receipt-printable" class="p-6 font-mono text-xs text-[#121c2c] space-y-3 bg-[#fffefc]">
@@ -698,8 +701,8 @@
           </div>
         </div>
 
-        <!-- Modal Action Buttons -->
-        <div class="p-4 bg-slate-50 border-t border-[#e9edf4] flex items-center justify-between gap-2">
+        <!-- Modal Action Buttons (tidak ikut dicetak) -->
+        <div class="print:hidden p-4 bg-slate-50 border-t border-[#e9edf4] flex items-center justify-between gap-2">
           <button 
             @click="printReceipt"
             class="flex-1 py-2 px-3 rounded-xl bg-[#5242e2] text-white text-xs font-bold hover:bg-[#4335ba] transition-colors flex items-center justify-center gap-1.5 shadow-md shadow-[#5242e2]/20"
@@ -718,6 +721,7 @@
 
       </div>
     </div>
+    </Teleport>
 
     <!-- ==================== MODAL 2: SUPERVISOR VOID PROTECTION ==================== -->
     <div 
@@ -893,6 +897,7 @@
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue';
 import { Link } from '@inertiajs/vue3';
+import { route } from '@/route';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { usePosStore } from '@/Stores/posStore';
 
@@ -1260,21 +1265,54 @@ onMounted(() => {
   animation: scaleIn 0.18s ease-out forwards;
 }
 
+</style>
+
+<!--
+  Style CETAK STRUK. Sengaja TIDAK "scoped", karena harus bisa menyembunyikan
+  elemen di luar komponen ini (sidebar, header layout, dll).
+
+  Cara kerja saat window.print():
+  1. Modal struk berada langsung di <body> (lewat <Teleport to="body">).
+  2. Semua anak <body> LAINNYA (seluruh aplikasi: sidebar, POS, dll)
+     disembunyikan dengan display: none, jadi tidak memakan tempat di kertas
+     (tidak ada halaman kosong tambahan).
+  3. Modal & kartunya "dinetralkan": posisi fixed, transform/animasi,
+     overflow-hidden, blur, dan bayangan dimatikan. Kalau tidak, struk
+     terpotong (hanya bagian atasnya yang tercetak).
+  4. Tombol "Cetak Struk" & "Tutup" disembunyikan (class print:hidden).
+  5. Lebar struk 80mm (ukuran kertas printer thermal).
+-->
+<style>
 @media print {
-  body * {
-    visibility: hidden;
+  body {
+    background: #fff !important;
   }
-  #receipt-printable, #receipt-printable * {
-    visibility: visible;
+
+  body > *:not(.receipt-modal) {
+    display: none !important;
   }
+
+  .receipt-modal,
+  .receipt-card {
+    position: static !important;
+    display: block !important;
+    padding: 0 !important;
+    transform: none !important;
+    animation: none !important;
+    overflow: visible !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+  }
+
   #receipt-printable {
-    position: absolute;
-    left: 0;
-    top: 0;
     width: 80mm;
     margin: 0;
     padding: 10px;
     font-size: 11px;
+    background: #fff !important;
   }
 }
 </style>

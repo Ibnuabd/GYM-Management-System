@@ -550,6 +550,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useForm, router, Link } from '@inertiajs/vue3';
+import { route } from '@/route';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 const props = defineProps({

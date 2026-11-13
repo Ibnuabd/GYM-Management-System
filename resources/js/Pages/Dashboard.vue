@@ -357,14 +357,41 @@
           </div>
         </div>
 
-        <!-- Status RFID & webcam hanya bisa diketahui di komputer kios, jadi arahkan ke layar kios -->
-        <Link
-          :href="route('kiosk')"
-          class="w-full mt-3 py-1.5 rounded-lg bg-[#e8eeff] hover:bg-[#dfe8ff] text-[#5242e2] text-xs font-bold transition-colors flex items-center justify-center gap-1"
-        >
-          <span class="material-symbols-outlined text-[15px]">qr_code_scanner</span>
-          <span>Buka Layar Kios</span>
-        </Link>
+        <!-- Aktivitas kios hari ini: tanda kios masih dipakai / berfungsi -->
+        <div class="mt-4 pt-3 border-t border-[#e9edf4] space-y-2.5">
+          <!-- Scan terakhir di gerbang -->
+          <div class="rounded-lg bg-[#f8f9fc] p-2.5">
+            <p class="text-[10px] font-semibold text-[#777587] mb-1.5">Scan terakhir di gerbang</p>
+            <div v-if="lastScan" class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="material-symbols-outlined text-[18px] shrink-0" :class="lastScan.status === 'IN' ? 'text-[#09ad95]' : 'text-[#05c3fb]'">
+                  {{ lastScan.status === 'IN' ? 'login' : 'logout' }}
+                </span>
+                <div class="min-w-0">
+                  <p class="text-xs font-bold text-[#121c2c] truncate">{{ lastScan.member_name }}</p>
+                  <p class="text-[10px] text-[#777587]">{{ lastScan.scanned_time }} • {{ lastScan.time_ago }}</p>
+                </div>
+              </div>
+              <span
+                class="shrink-0 px-1.5 py-0.5 rounded-full text-[9px] font-bold"
+                :class="lastScan.status === 'IN' ? 'bg-[#09ad95]/10 text-[#09ad95]' : 'bg-[#05c3fb]/10 text-[#05c3fb]'"
+              >{{ lastScan.status }}</span>
+            </div>
+            <p v-else class="text-[11px] text-[#777587]">Belum ada scan hari ini.</p>
+          </div>
+
+          <!-- Jumlah scan hari ini -->
+          <div class="grid grid-cols-2 gap-2">
+            <div class="rounded-lg bg-[#09ad95]/5 p-2 text-center">
+              <p class="text-[10px] font-semibold text-[#777587]">Check-in hari ini</p>
+              <p class="text-base font-black text-[#09ad95] tnum">{{ metrics.today_checkins }}</p>
+            </div>
+            <div class="rounded-lg bg-[#05c3fb]/5 p-2 text-center">
+              <p class="text-[10px] font-semibold text-[#777587]">Check-out hari ini</p>
+              <p class="text-base font-black text-[#05c3fb] tnum">{{ metrics.today_checkouts }}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
     </section>
@@ -394,14 +421,6 @@
               <span class="material-symbols-outlined text-[15px]" :class="{ 'animate-spin': isReloading }">refresh</span>
               <span>Perbarui</span>
             </button>
-            <Link
-              :href="route('kiosk')"
-              class="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-white bg-[#09ad95] hover:bg-[#078d7a] rounded-lg transition-colors"
-              title="Buka Kios Mandiri"
-            >
-              <span class="material-symbols-outlined text-[15px]">qr_code_scanner</span>
-              <span>Layar Kios</span>
-            </Link>
           </div>
         </div>
 
@@ -610,6 +629,9 @@ const todayLabel = new Date().toLocaleDateString('id-ID', { day: 'numeric', mont
 const formatRupiah = (value) => 'Rp ' + Math.round(Number(value) || 0).toLocaleString('id-ID');
 
 // Persentase okupansi gym (maksimal 100%)
+// Scan kartu terakhir hari ini (data terbaru ada di urutan pertama). null jika belum ada scan.
+const lastScan = computed(() => props.recentAttendances?.[0] ?? null);
+
 const occupancyPercent = computed(() => {
   if (!props.metrics.gym_capacity) return 0;
   return Math.min(100, Math.round((props.metrics.in_gym_count / props.metrics.gym_capacity) * 100));

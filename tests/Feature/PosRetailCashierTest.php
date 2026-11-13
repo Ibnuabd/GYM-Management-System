@@ -80,6 +80,25 @@ class PosRetailCashierTest extends TestCase
         $response->assertJsonFragment(['barcode' => $this->product->barcode]);
     }
 
+    public function test_product_catalog_low_stock_filter_shows_only_products_at_or_below_min_stock(): void
+    {
+        // Semua produk seeder dibuat stoknya aman dulu, supaya hasil filter pasti.
+        Product::query()->update(['stock' => 100, 'min_stock' => 5]);
+
+        $belowMinimum = Product::factory()->create(['name' => 'AAA Stok Kurang', 'stock' => 2, 'min_stock' => 5]);
+        $exactlyAtMinimum = Product::factory()->create(['name' => 'AAB Stok Pas Batas', 'stock' => 5, 'min_stock' => 5]);
+        Product::factory()->create(['name' => 'AAC Stok Aman', 'stock' => 6, 'min_stock' => 5]);
+
+        $this->actingAs($this->admin)->get(route('products.index', ['low_stock' => 1]))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Products/Index')
+                ->has('products.data', 2)
+                ->where('products.data.0.id', $belowMinimum->id)
+                ->where('products.data.1.id', $exactlyAtMinimum->id)
+            );
+    }
+
     public function test_checkout_atomically_deducts_inventory_and_creates_transaction(): void
     {
         $initialStock = $this->product->stock;

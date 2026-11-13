@@ -88,6 +88,21 @@ class Product extends Model
     }
 
     /**
+     * Scope: produk yang stoknya menipis (stok <= batas minimum stok).
+     *
+     * Aturannya sama dengan atribut "is_low_stock" di atas, tetapi dijalankan
+     * di database, supaya bisa dipakai untuk filter + paginasi.
+     * Contoh: Product::lowStock()->get();
+     *
+     * @param  Builder<Product>  $query
+     * @return Builder<Product>
+     */
+    public function scopeLowStock(Builder $query): Builder
+    {
+        return $query->whereColumn('stock', '<=', 'min_stock');
+    }
+
+    /**
      * Scope query to search by barcode, name, or category.
      *
      * @param  Builder<Product>  $query

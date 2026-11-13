@@ -238,6 +238,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useForm, router, Link, usePage } from '@inertiajs/vue3';
+import { route } from '@/route';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 // Hanya user dengan permission "manage_packages" (admin & supervisor) yang melihat tombol tambah/ubah/hapus.
