@@ -60,7 +60,7 @@
             <span class="material-symbols-outlined text-[14px]">verified</span>
             <span>Status Keanggotaan: {{ digitalCard.is_active ? 'AKTIF' : 'TIDAK AKTIF' }}</span>
           </div>
-          <h2 class="text-xl sm:text-2xl font-black tracking-tight">Halo, {{ member.full_name }}! 👋</h2>
+          <h2 class="text-xl sm:text-2xl font-black tracking-tight">Halo, {{ member.full_name }}!</h2>
           <p class="text-xs text-white/70 mt-1 max-w-xl">
             Selamat datang di portal mandiri FitCore. Di sini Anda dapat memeriksa kartu keanggotaan digital, sisa kuota Personal Trainer, dan catatan latihan dari pelatih Anda.
           </p>

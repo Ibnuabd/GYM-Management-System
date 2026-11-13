@@ -574,36 +574,33 @@
                 </td>
 
                 <!-- Actions -->
-                <td class="py-3 px-3 text-right space-x-1">
-                  <!-- Re-print Receipt -->
-                  <button 
-                    @click="viewReceipt(trx)"
-                    class="p-1 rounded-lg text-slate-500 hover:text-[#5242e2] hover:bg-[#e8eeff] transition-colors"
-                    title="Lihat Struk"
-                  >
-                    <span class="material-symbols-outlined text-[16px]">receipt</span>
-                  </button>
+                <td class="py-3 px-3">
+                  <!-- Kedua tombol memakai bentuk yang sama (tinggi h-7, ikon + teks) supaya sejajar -->
+                  <div class="flex items-center justify-end gap-1.5">
+                    <!-- Lihat / cetak ulang struk -->
+                    <button
+                      @click="viewReceipt(trx)"
+                      class="h-7 px-2 rounded-lg text-[10px] font-bold text-slate-600 bg-slate-50 hover:bg-[#e8eeff] hover:text-[#5242e2] border border-slate-200 transition-colors inline-flex items-center gap-1"
+                      title="Lihat Struk"
+                    >
+                      <span class="material-symbols-outlined text-[14px]">receipt</span>
+                      <span>Struk</span>
+                    </button>
 
-                  <!-- Void Authorization (Only for COMPLETED orders) -->
-                  <button 
-                    v-if="trx.status === 'COMPLETED'"
-                    @click="openVoidModal(trx)"
-                    class="px-2 py-1 rounded-lg text-[10px] font-bold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors inline-flex items-center gap-1"
-                    title="Batalkan transaksi ini dengan otorisasi Supervisor"
-                  >
-                    <span class="material-symbols-outlined text-[13px]">shield</span>
-                    <span>Void</span>
-                  </button>
+                    <!-- Void: hanya untuk transaksi COMPLETED -->
+                    <button
+                      v-if="trx.status === 'COMPLETED'"
+                      @click="openVoidModal(trx)"
+                      class="h-7 px-2 rounded-lg text-[10px] font-bold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors inline-flex items-center gap-1"
+                      title="Batalkan transaksi ini dengan otorisasi Supervisor"
+                    >
+                      <span class="material-symbols-outlined text-[14px]">shield</span>
+                      <span>Void</span>
+                    </button>
 
-                  <!-- Disabled Direct Delete -->
-                  <button 
-                    v-if="trx.status === 'COMPLETED'"
-                    @click="alertDisabledDelete"
-                    class="p-1 text-slate-300 cursor-not-allowed hover:text-slate-400"
-                    title="Penghapusan langsung dinonaktifkan demi keamanan audit kasir."
-                  >
-                    <span class="material-symbols-outlined text-[16px]">delete</span>
-                  </button>
+                    <!-- Tidak ada tombol Hapus: transaksi yang sudah selesai tidak boleh dihapus
+                         (demi audit keuangan). Pembatalan resmi hanya lewat tombol Void. -->
+                  </div>
                 </td>
 
               </tr>
@@ -1206,10 +1203,6 @@ const submitVoidAuthorization = async () => {
   } finally {
     isProcessingVoid.value = false;
   }
-};
-
-const alertDisabledDelete = () => {
-  alert('Demi kepatuhan audit kasir, transaksi yang sudah difinalisasi tidak dapat dihapus. Silakan gunakan tombol "Void" dengan otorisasi Supervisor.');
 };
 
 // --- MEMBER SEARCH LOOKUP ---

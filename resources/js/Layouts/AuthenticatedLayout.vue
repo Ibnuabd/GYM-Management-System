@@ -153,15 +153,23 @@
         </nav>
       </div>
 
-      <!-- Hardware Status Badge -->
-      <div class="p-4 border-t border-[#c8c4d8]/30">
+      <!-- Status Kios: dari data scan NYATA (lihat kioskStatus() di HandleInertiaRequests.php).
+           Titik hijau = ada scan dalam 30 menit terakhir, abu-abu = sepi / belum ada scan hari ini. -->
+      <div v-if="kioskStatus" class="p-4 border-t border-[#c8c4d8]/30">
         <div class="p-3 rounded-xl bg-gradient-to-br from-[#6c5ffc]/10 via-[#e8eeff] to-[#09ad95]/10 border border-[#6c5ffc]/20 text-center">
           <div class="flex items-center justify-center gap-2 mb-1">
-            <span class="w-2 h-2 rounded-full bg-[#09ad95] animate-ping"></span>
-            <span class="w-2 h-2 rounded-full bg-[#09ad95] -ml-4"></span>
-            <span class="text-xs font-bold text-[#121c2c]">Kios Gate Online</span>
+            <template v-if="kioskStatus.is_active">
+              <span class="w-2 h-2 rounded-full bg-[#09ad95] animate-ping"></span>
+              <span class="w-2 h-2 rounded-full bg-[#09ad95] -ml-4"></span>
+            </template>
+            <span v-else class="w-2 h-2 rounded-full bg-[#c8c4d8]"></span>
+            <span class="text-xs font-bold text-[#121c2c]">
+              {{ kioskStatus.last_scan_ago ? `Scan terakhir: ${kioskStatus.last_scan_ago}` : 'Belum ada scan hari ini' }}
+            </span>
           </div>
-          <p class="text-[10px] text-[#474555]">RFID USB & Webcam 60fps Terhubung</p>
+          <p class="text-[10px] text-[#474555]">
+            {{ kioskStatus.today_checkins }} check-in hari ini<template v-if="kioskStatus.last_scan_time"> • pukul {{ kioskStatus.last_scan_time }}</template>
+          </p>
         </div>
       </div>
     </aside>
@@ -308,6 +316,11 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { usePage, router, Link } from '@inertiajs/vue3';
 import { route } from '@/route';
+
+// ==================== STATUS KIOS (kartu di bawah sidebar) ====================
+// Dikirim server dari scan kartu terakhir hari ini. null = user tidak memakai kios (kartu disembunyikan).
+const currentPage = usePage();
+const kioskStatus = computed(() => currentPage.props.kioskStatus);
 
 // ==================== POP-UP NOTIFIKASI (TOAST) ====================
 // Server mengirim pesan lewat flash: ->with('success' | 'error' | 'info', 'pesan').
