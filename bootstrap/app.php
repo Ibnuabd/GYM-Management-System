@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
+use Symfony\Component\HttpFoundation\Response;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -35,4 +36,18 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
+
+        // Jika user membuka halaman yang tidak boleh diakses (403) dari DALAM aplikasi
+        // (klik menu/link Inertia), jangan tampilkan halaman error. Kembalikan ke halaman
+        // sebelumnya dan tampilkan pop-up notifikasi (flash "error", lihat AuthenticatedLayout.vue).
+        // Request biasa (mengetik URL langsung) dan request JSON tetap mendapat 403 seperti biasa.
+        $exceptions->respond(function (Response $response, Throwable $exception, Request $request) {
+            $isInertiaRequest = $request->hasHeader('X-Inertia');
+
+            if ($isInertiaRequest && $response->getStatusCode() === 403) {
+                return back()->with('error', 'Anda tidak memiliki akses ke halaman tersebut.');
+            }
+
+            return $response;
+        });
     })->create();

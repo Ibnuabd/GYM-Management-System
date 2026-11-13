@@ -56,6 +56,7 @@ class DashboardController extends Controller
             'metrics' => $metrics,
             'canViewFinancials' => $canViewFinancials,
             'monthlyRevenue' => $monthlyRevenue,
+            'monthlyTrends' => $this->monthlyTrends(),
             'demographics' => $this->memberDemographics(),
             'databaseLatencyMs' => $this->measureDatabaseLatencyMs(),
             'recentAttendances' => $this->recentAttendances(),
@@ -132,13 +133,11 @@ class DashboardController extends Controller
     {
         $months = [];
 
-        for ($monthsAgo = 5; $monthsAgo >= 0; $monthsAgo--) {
-            $monthStart = Carbon::today()->startOfMonth()->subMonthsNoOverflow($monthsAgo);
-            $monthEnd = $monthStart->copy()->endOfMonth();
-            $period = [$monthStart, $monthEnd];
+        foreach ($this->lastSixMonths() as $month) {
+            $period = [$month['start'], $month['end']];
 
             $months[] = [
-                'month' => $monthStart->translatedFormat('M'),
+                'month' => $month['label'],
                 'gym' => (float) MemberSubscription::countedAsRevenue()
                     ->whereBetween('created_at', $period)
                     ->whereHas('package', fn ($query) => $query->where('type', 'gym'))
@@ -150,6 +149,53 @@ class DashboardController extends Controller
                 'pos' => (float) PosTransaction::completed()
                     ->whereBetween('created_at', $period)
                     ->sum('total_amount'),
+                'is_current' => $month['is_current'],
+            ];
+        }
+
+        return $months;
+    }
+
+    /**
+     * Tren 6 bulan terakhir untuk grafik garis kecil (sparkline) di kartu dashboard.
+     * Boleh dilihat semua staf (bukan data keuangan).
+     *
+     * @return array{new_members: list<int>, pt_sessions: list<int>}
+     */
+    private function monthlyTrends(): array
+    {
+        $newMembers = [];
+        $ptSessions = [];
+
+        foreach ($this->lastSixMonths() as $month) {
+            $period = [$month['start'], $month['end']];
+
+            $newMembers[] = Member::whereBetween('created_at', $period)->count();
+            $ptSessions[] = PtSessionLog::whereBetween('session_date', $period)->count();
+        }
+
+        return [
+            'new_members' => $newMembers,
+            'pt_sessions' => $ptSessions,
+        ];
+    }
+
+    /**
+     * Daftar 6 bulan terakhir (5 bulan lalu sampai bulan ini), urut dari yang paling lama.
+     *
+     * @return list<array{start: Carbon, end: Carbon, label: string, is_current: bool}>
+     */
+    private function lastSixMonths(): array
+    {
+        $months = [];
+
+        for ($monthsAgo = 5; $monthsAgo >= 0; $monthsAgo--) {
+            $monthStart = Carbon::today()->startOfMonth()->subMonthsNoOverflow($monthsAgo);
+
+            $months[] = [
+                'start' => $monthStart,
+                'end' => $monthStart->copy()->endOfMonth(),
+                'label' => $monthStart->translatedFormat('M'),
                 'is_current' => $monthsAgo === 0,
             ];
         }

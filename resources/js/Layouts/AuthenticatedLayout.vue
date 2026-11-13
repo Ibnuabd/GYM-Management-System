@@ -113,13 +113,14 @@
                 <span class="material-symbols-outlined text-[18px]" :class="$page.url.startsWith('/reports') ? 'text-white' : 'text-[#6c5ffc]'">query_stats</span>
                 <span>Laporan Pendapatan</span>
               </Link>
-              <a 
-                href="#attendance-logs" 
-                class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[#474555] hover:bg-[#e8eeff] hover:text-[#5242e2] transition-colors duration-150 font-medium text-xs"
+              <Link
+                :href="route('attendances.index')"
+                class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors duration-150 font-medium text-xs"
+                :class="$page.url.startsWith('/attendances') ? 'bg-[#6c5ffc] text-white shadow-sm font-semibold' : 'text-[#474555] hover:bg-[#e8eeff] hover:text-[#5242e2]'"
               >
-                <span class="material-symbols-outlined text-[18px] text-[#09ad95]">camera_indoor</span>
+                <span class="material-symbols-outlined text-[18px]" :class="$page.url.startsWith('/attendances') ? 'text-white' : 'text-[#09ad95]'">camera_indoor</span>
                 <span>Log Kehadiran & Foto</span>
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -250,14 +251,35 @@
         </div>
       </header>
 
-      <!-- Flash Notification Alerts -->
-      <div v-if="$page.props.flash?.success" class="mx-6 mt-4 p-3 bg-[#09ad95]/10 border border-[#09ad95]/30 text-[#09ad95] rounded-xl text-xs font-semibold flex items-center gap-2">
-        <span class="material-symbols-outlined text-[18px]">check_circle</span>
-        <span>{{ $page.props.flash.success }}</span>
-      </div>
-      <div v-if="$page.props.flash?.error" class="mx-6 mt-4 p-3 bg-[#ba1a1a]/10 border border-[#ba1a1a]/30 text-[#ba1a1a] rounded-xl text-xs font-semibold flex items-center gap-2">
-        <span class="material-symbols-outlined text-[18px]">error</span>
-        <span>{{ $page.props.flash.error }}</span>
+      <!-- Pop-up Notifikasi (toast) di pojok kanan atas. Isinya dari flash success / error / info. -->
+      <div class="fixed top-4 right-4 z-[60] flex flex-col gap-2 w-[min(360px,calc(100vw-2rem))]" aria-live="polite">
+        <TransitionGroup
+          enter-active-class="transition duration-200 ease-out"
+          enter-from-class="opacity-0 translate-x-4"
+          leave-active-class="transition duration-150 ease-in"
+          leave-to-class="opacity-0 translate-x-4"
+        >
+          <div
+            v-for="toast in toasts"
+            :key="toast.id"
+            role="alert"
+            class="flex items-start gap-2.5 p-3.5 rounded-xl border shadow-lg bg-white text-xs font-semibold"
+            :class="toastStyles[toast.type].box"
+          >
+            <span class="material-symbols-outlined text-[20px] shrink-0" :class="toastStyles[toast.type].icon">
+              {{ toastStyles[toast.type].iconName }}
+            </span>
+            <p class="flex-1 leading-snug text-[#121c2c]">{{ toast.message }}</p>
+            <button
+              type="button"
+              @click="dismissToast(toast.id)"
+              class="shrink-0 text-[#777587] hover:text-[#121c2c]"
+              aria-label="Tutup notifikasi"
+            >
+              <span class="material-symbols-outlined text-[18px]">close</span>
+            </button>
+          </div>
+        </TransitionGroup>
       </div>
 
       <!-- Main Slot Content -->
@@ -270,10 +292,46 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { usePage, router, Link } from '@inertiajs/vue3';
 
+// ==================== POP-UP NOTIFIKASI (TOAST) ====================
+// Server mengirim pesan lewat flash: ->with('success' | 'error' | 'info', 'pesan').
+// Setiap pesan baru ditampilkan sebagai pop-up, lalu hilang sendiri setelah 5 detik.
+const TOAST_DURATION_MS = 5000;
+
+const toastStyles = {
+  success: { box: 'border-[#09ad95]/40', icon: 'text-[#09ad95]', iconName: 'check_circle' },
+  error: { box: 'border-[#ba1a1a]/40', icon: 'text-[#ba1a1a]', iconName: 'block' },
+  info: { box: 'border-[#05c3fb]/50', icon: 'text-[#05c3fb]', iconName: 'info' },
+};
+
+const toasts = ref([]);
+let lastToastId = 0;
+
+const dismissToast = (id) => {
+  toasts.value = toasts.value.filter((toast) => toast.id !== id);
+};
+
+const showToast = (type, message) => {
+  if (!message) return;
+  const id = ++lastToastId;
+  toasts.value.push({ id, type, message });
+  setTimeout(() => dismissToast(id), TOAST_DURATION_MS);
+};
+
 const page = usePage();
+
+// Tampilkan pop-up setiap kali server mengirim flash baru (setelah pindah halaman / submit form).
+watch(
+  () => page.props.flash,
+  (flash) => {
+    showToast('success', flash?.success);
+    showToast('error', flash?.error);
+    showToast('info', flash?.info);
+  },
+  { immediate: true },
+);
 const user = computed(() => page.props.auth?.user);
 const roles = computed(() => user.value?.roles || []);
 const permissions = computed(() => user.value?.permissions || []);

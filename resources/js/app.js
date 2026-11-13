@@ -13,6 +13,7 @@ export function route(name, params = null) {
         'kiosk': '/kiosk',
         'kiosk.scan': '/kiosk/scan',
         'kiosk.recent': '/kiosk/recent',
+        'attendances.index': '/attendances',
         'pos': '/pos',
         'pos.checkout': '/pos/checkout',
         'pos.search': '/pos/search',

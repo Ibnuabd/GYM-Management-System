@@ -105,6 +105,10 @@ class DashboardAndReportAccuracyTest extends TestCase
                 ->where('demographics.female', 2)
                 ->has('recentAttendances', 3)
                 ->has('recentPtSessions', 1)
+                // Tren 6 bulan untuk sparkline: elemen terakhir (index 5) = bulan ini
+                ->has('monthlyTrends.new_members', 6)
+                ->where('monthlyTrends.new_members.5', 3)
+                ->where('monthlyTrends.pt_sessions.5', 1)
             );
     }
 

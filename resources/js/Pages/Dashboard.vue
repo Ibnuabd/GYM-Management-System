@@ -46,15 +46,17 @@
           <span class="text-[10px] font-bold text-[#5242e2] bg-[#5242e2]/10 px-2 py-0.5 rounded-full">Bulan ini</span>
         </div>
         <div class="pt-2">
-          <svg class="w-full h-8" fill="none" viewBox="0 0 100 24">
+          <!-- Tren pendapatan 6 bulan terakhir (dari monthlyRevenue) -->
+          <svg class="w-full h-8" fill="none" viewBox="0 0 100 24" preserveAspectRatio="none">
+            <title>Tren pendapatan 6 bulan terakhir</title>
             <defs>
               <linearGradient id="grad1" x1="0" x2="0" y1="0" y2="1">
                 <stop offset="0%" stop-color="#6c5ffc" stop-opacity="0.3"></stop>
                 <stop offset="100%" stop-color="#6c5ffc" stop-opacity="0.0"></stop>
               </linearGradient>
             </defs>
-            <path d="M0,20 Q15,4 30,14 T60,6 T85,12 T100,2" fill="none" stroke="#6c5ffc" stroke-linecap="round" stroke-width="2.5"></path>
-            <path d="M0,20 Q15,4 30,14 T60,6 T85,12 T100,2 L100,24 L0,24 Z" fill="url(#grad1)"></path>
+            <path :d="revenueSparkline.area" fill="url(#grad1)"></path>
+            <path :d="revenueSparkline.line" fill="none" stroke="#6c5ffc" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" vector-effect="non-scaling-stroke"></path>
           </svg>
           <p class="text-[11px] text-[#777587] mt-1">Langganan Gym + PT + Ritel POS</p>
         </div>
@@ -73,15 +75,17 @@
           <span class="text-[10px] font-bold text-[#09ad95] bg-[#09ad95]/10 px-2 py-0.5 rounded-full">Paket aktif</span>
         </div>
         <div class="pt-2">
-          <svg class="w-full h-8" fill="none" viewBox="0 0 100 24">
+          <!-- Tren member baru 6 bulan terakhir (dari monthlyTrends.new_members) -->
+          <svg class="w-full h-8" fill="none" viewBox="0 0 100 24" preserveAspectRatio="none">
+            <title>Member baru per bulan, 6 bulan terakhir</title>
             <defs>
               <linearGradient id="grad2" x1="0" x2="0" y1="0" y2="1">
                 <stop offset="0%" stop-color="#09ad95" stop-opacity="0.3"></stop>
                 <stop offset="100%" stop-color="#09ad95" stop-opacity="0.0"></stop>
               </linearGradient>
             </defs>
-            <path d="M0,16 Q20,6 40,12 T70,4 T100,2" fill="none" stroke="#09ad95" stroke-linecap="round" stroke-width="2.5"></path>
-            <path d="M0,16 Q20,6 40,12 T70,4 T100,2 L100,24 L0,24 Z" fill="url(#grad2)"></path>
+            <path :d="newMembersSparkline.area" fill="url(#grad2)"></path>
+            <path :d="newMembersSparkline.line" fill="none" stroke="#09ad95" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" vector-effect="non-scaling-stroke"></path>
           </svg>
           <p class="text-[11px] text-[#777587] mt-1">{{ metrics.new_members_this_week }} member baru terdaftar 7 hari terakhir</p>
         </div>
@@ -123,15 +127,17 @@
           <span class="text-[10px] font-bold text-[#b58004] bg-[#f7b924]/15 px-2 py-0.5 rounded-full">Bulan ini</span>
         </div>
         <div class="pt-2">
-          <svg class="w-full h-8" fill="none" viewBox="0 0 100 24">
+          <!-- Tren sesi PT 6 bulan terakhir (dari monthlyTrends.pt_sessions) -->
+          <svg class="w-full h-8" fill="none" viewBox="0 0 100 24" preserveAspectRatio="none">
+            <title>Sesi PT per bulan, 6 bulan terakhir</title>
             <defs>
               <linearGradient id="grad4" x1="0" x2="0" y1="0" y2="1">
                 <stop offset="0%" stop-color="#f7b924" stop-opacity="0.3"></stop>
                 <stop offset="100%" stop-color="#f7b924" stop-opacity="0.0"></stop>
               </linearGradient>
             </defs>
-            <path d="M0,14 Q25,4 50,18 T75,8 T100,2" fill="none" stroke="#f7b924" stroke-linecap="round" stroke-width="2.5"></path>
-            <path d="M0,14 Q25,4 50,18 T75,8 T100,2 L100,24 L0,24 Z" fill="url(#grad4)"></path>
+            <path :d="ptSessionsSparkline.area" fill="url(#grad4)"></path>
+            <path :d="ptSessionsSparkline.line" fill="none" stroke="#f7b924" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" vector-effect="non-scaling-stroke"></path>
           </svg>
           <p class="text-[11px] text-[#777587] mt-1">Sesi PT yang tercatat bulan ini</p>
         </div>
@@ -505,7 +511,7 @@
                   <p class="text-[10px] text-[#5242e2] font-semibold mt-0.5">Sisa: {{ pt.remaining_sessions }}</p>
                 </div>
               </div>
-              <span class="text-[10px] text-[#777587] tnum">{{ pt.time_ago }}</span>
+              <span class="text-[10px] text-[#777587] tnum whitespace-nowrap shrink-0 ml-2">{{ pt.time_ago }}</span>
             </div>
           </div>
         </div>
@@ -587,6 +593,8 @@ const props = defineProps({
   canViewFinancials: Boolean,
   // Pendapatan 6 bulan terakhir: [{ month, gym, pt, pos, is_current }], null jika tidak boleh lihat
   monthlyRevenue: Array,
+  // Tren 6 bulan terakhir untuk sparkline: { new_members: [..6 angka], pt_sessions: [..6 angka] }
+  monthlyTrends: Object,
   // Jumlah member aktif per jenis kelamin: { total, male, female, other }
   demographics: Object,
   databaseLatencyMs: Number,
@@ -620,6 +628,30 @@ const revenueBars = computed(() => {
     posPercent: toPercent(m.pos),
   }));
 });
+
+// Membuat garis grafik kecil (sparkline) dari daftar angka, contoh: [0, 2, 1, 5, 3, 4].
+// Area gambar SVG berukuran lebar 100 x tinggi 24. Garis hanya boleh berada di antara
+// y=3 (atas) dan y=21 (bawah), supaya tidak terpotong di tepi kartu.
+// Garis dibuat lurus antar titik (perintah "L"), bukan kurva, karena kurva bisa melewati batas.
+const sparkline = (values) => {
+  const points = values && values.length > 1 ? values : [0, 0];
+  const highest = Math.max(1, ...points);
+  const top = 3;
+  const bottom = 21;
+
+  const coordinates = points.map((value, index) => {
+    const x = (index / (points.length - 1)) * 100;
+    const y = bottom - (value / highest) * (bottom - top);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+
+  const line = 'M' + coordinates.join(' L');
+  return { line, area: `${line} L100,24 L0,24 Z` };
+};
+
+const revenueSparkline = computed(() => sparkline((props.monthlyRevenue || []).map((m) => m.gym + m.pt + m.pos)));
+const newMembersSparkline = computed(() => sparkline(props.monthlyTrends?.new_members));
+const ptSessionsSparkline = computed(() => sparkline(props.monthlyTrends?.pt_sessions));
 
 // Persentase member pria & wanita untuk grafik donat
 const malePercent = computed(() => {

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AttendanceKioskController;
+use App\Http\Controllers\AttendanceLogController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MemberController;
@@ -102,10 +103,14 @@ Route::middleware('auth:web')->group(function () {
         Route::get('/reports', [ReportController::class, 'index'])->name('reports');
         Route::get('/reports/export/pdf', [ReportController::class, 'exportPdf'])->name('reports.export.pdf');
         Route::get('/reports/export/excel', [ReportController::class, 'exportExcel'])->name('reports.export.excel');
+
+        // Log Kehadiran & Foto (riwayat scan RFID + snapshot webcam)
+        Route::get('/attendances', [AttendanceLogController::class, 'index'])->name('attendances.index');
     });
 
+    // Manajemen User belum dibuat. Sementara: kembali ke halaman sebelumnya + pop-up informasi.
     Route::get('/users', function () {
-        return response()->json(['message' => 'Akses Manajemen User diizinkan', 'role' => auth()->user()->getRoleNames()]);
+        return back()->with('info', 'Fitur Manajemen User (RBAC) belum tersedia dan sedang dalam pengembangan.');
     })->middleware('permission:manage_users')->name('users');
 });
 
