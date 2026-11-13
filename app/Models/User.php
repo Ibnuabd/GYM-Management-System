@@ -13,7 +13,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password', 'supervisor_pin'])]
+#[Fillable(['name', 'email', 'password', 'supervisor_pin', 'is_active'])]
 #[Hidden(['password', 'supervisor_pin', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -31,7 +31,31 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'supervisor_pin' => 'hashed',
+            'is_active' => 'boolean',
         ];
+    }
+
+    /**
+     * Daftar role staf yang boleh dipilih di halaman Manajemen User.
+     * Urutan = urutan tampil di dropdown.
+     *
+     * @var list<string>
+     */
+    public const STAFF_ROLES = ['admin', 'supervisor', 'cs', 'pt'];
+
+    /**
+     * Role yang boleh punya PIN supervisor (untuk otorisasi void & diskon di kasir).
+     *
+     * @var list<string>
+     */
+    public const ROLES_WITH_SUPERVISOR_PIN = ['admin', 'supervisor'];
+
+    /**
+     * Role utama user ini, contoh: "admin". Null jika belum punya role.
+     */
+    public function primaryRole(): ?string
+    {
+        return $this->getRoleNames()->first();
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMemberRequest;
 use App\Http\Requests\UpdateMemberRequest;
+use App\Models\ActivityLog;
 use App\Models\Member;
 use App\Models\MemberSubscription;
 use App\Models\Package;
@@ -116,6 +117,8 @@ class MemberController extends Controller
                 ]);
             }
 
+            ActivityLog::record('member.created', "Mendaftarkan member baru {$member->full_name} ({$member->member_code})", $member);
+
             return $member;
         });
 
@@ -193,6 +196,13 @@ class MemberController extends Controller
             'status' => $validated['status'],
         ]);
 
+        ActivityLog::record(
+            'member.updated',
+            "Mengubah data member {$member->full_name} ({$member->member_code})",
+            $member,
+            ActivityLog::changesOf($member),
+        );
+
         return redirect()->route('members.show', $member)
             ->with('success', "Data profil member {$member->full_name} berhasil diperbarui.");
     }
@@ -208,6 +218,11 @@ class MemberController extends Controller
 
         $name = $member->full_name;
         $member->delete();
+
+        ActivityLog::record('member.deleted', "Menghapus member {$name} ({$member->member_code})", $member, [
+            'full_name' => $name,
+            'member_code' => $member->member_code,
+        ]);
 
         return redirect()->route('members.index')
             ->with('success', "Member {$name} berhasil dihapus dari sistem.");

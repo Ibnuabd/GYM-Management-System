@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ReportFilterRequest;
+use App\Models\ActivityLog;
 use App\Models\Attendance;
 use App\Models\Member;
 use App\Models\MemberSubscription;
@@ -65,6 +66,8 @@ class ReportController extends Controller
 
         $pdf->setPaper('a4', 'portrait');
 
+        $this->logExport('report.exported_pdf', 'PDF', $filters);
+
         $fileName = 'Laporan-Keuangan-FitCore-'.Carbon::now()->format('Ymd-His').'.pdf';
 
         return $pdf->download($fileName);
@@ -81,6 +84,8 @@ class ReportController extends Controller
         $spreadsheet = new Spreadsheet;
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Laporan Finansial');
+
+        $this->logExport('report.exported_excel', 'Excel', $filters);
 
         // Document Title Header
         $sheet->setCellValue('A1', 'FITCORE GYM MANAGEMENT SYSTEM');
@@ -443,5 +448,21 @@ class ReportController extends Controller
     private function setTextCell(Worksheet $sheet, string $cell, ?string $value): void
     {
         $sheet->setCellValueExplicit($cell, (string) $value, DataType::TYPE_STRING);
+    }
+
+    /**
+     * Catat ekspor laporan ke Log Aktivitas (siapa mengunduh laporan periode apa).
+     *
+     * @param  array{start_date: Carbon, end_date: Carbon, category: string}  $filters
+     */
+    private function logExport(string $action, string $format, array $filters): void
+    {
+        $period = $filters['start_date']->toDateString().' s/d '.$filters['end_date']->toDateString();
+
+        ActivityLog::record($action, "Mengekspor laporan {$format} periode {$period}", null, [
+            'start_date' => $filters['start_date']->toDateString(),
+            'end_date' => $filters['end_date']->toDateString(),
+            'category' => $filters['category'],
+        ]);
     }
 }

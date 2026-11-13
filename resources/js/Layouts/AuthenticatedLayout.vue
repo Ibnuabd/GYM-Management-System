@@ -125,15 +125,28 @@
           </div>
 
           <!-- PENGATURAN -->
-          <div v-if="hasPermission('manage_users')">
+          <div v-if="hasPermission('manage_users') || hasPermission('view_activity_logs')">
             <span class="block px-3 mb-2 text-[10px] uppercase tracking-wider text-[#777587] font-bold">PENGATURAN</span>
             <div class="space-y-1">
-              <Link 
-                :href="route('users')" 
-                class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[#474555] hover:bg-[#e8eeff] hover:text-[#5242e2] transition-colors duration-150 font-medium text-xs"
+              <Link
+                v-if="hasPermission('manage_users')"
+                :href="route('users.index')"
+                class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors duration-150 font-medium text-xs"
+                :class="$page.url.startsWith('/users') ? 'bg-[#6c5ffc] text-white shadow-sm font-semibold' : 'text-[#474555] hover:bg-[#e8eeff] hover:text-[#5242e2]'"
               >
-                <span class="material-symbols-outlined text-[18px] text-[#5242e2]">manage_accounts</span>
+                <span class="material-symbols-outlined text-[18px]" :class="$page.url.startsWith('/users') ? 'text-white' : 'text-[#5242e2]'">manage_accounts</span>
                 <span>Manajemen User (RBAC)</span>
+              </Link>
+
+              <!-- Log Aktivitas semua staf (issue #28), hanya admin -->
+              <Link
+                v-if="hasPermission('view_activity_logs')"
+                :href="route('activity-logs.index')"
+                class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors duration-150 font-medium text-xs"
+                :class="$page.url.startsWith('/activity-logs') ? 'bg-[#6c5ffc] text-white shadow-sm font-semibold' : 'text-[#474555] hover:bg-[#e8eeff] hover:text-[#5242e2]'"
+              >
+                <span class="material-symbols-outlined text-[18px]" :class="$page.url.startsWith('/activity-logs') ? 'text-white' : 'text-[#5242e2]'">manage_history</span>
+                <span>Log Aktivitas</span>
               </Link>
             </div>
           </div>

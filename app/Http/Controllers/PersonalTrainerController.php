@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePtSessionRequest;
+use App\Models\ActivityLog;
 use App\Models\Member;
 use App\Models\MemberSubscription;
 use App\Models\PtSessionLog;
@@ -253,7 +254,7 @@ class PersonalTrainerController extends Controller
             $subscription->save();
 
             // Simpan catatan aktivitas latihan untuk sesi ini.
-            PtSessionLog::create([
+            $sessionLog = PtSessionLog::create([
                 'member_subscription_id' => $subscription->id,
                 'member_id' => $subscription->member_id,
                 'pt_user_id' => $user->id,
@@ -262,6 +263,14 @@ class PersonalTrainerController extends Controller
                 'muscle_focus' => $validated['muscle_focus'],
                 'workout_notes' => $validated['workout_notes'],
                 'member_feedback' => $validated['member_feedback'] ?? null,
+            ]);
+
+            $remainingSessions = $subscription->total_sessions - $subscription->used_sessions;
+            ActivityLog::record('pt.session_recorded', "Mencatat sesi PT untuk member {$subscription->member->full_name} (sisa {$remainingSessions} sesi)", $sessionLog, [
+                'member_subscription_id' => $subscription->id,
+                'used_sessions' => $subscription->used_sessions,
+                'total_sessions' => $subscription->total_sessions,
+                'muscle_focus' => $validated['muscle_focus'],
             ]);
         });
 

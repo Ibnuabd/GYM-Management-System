@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\PosTransaction;
 use App\Models\PosTransactionItem;
 use App\Models\PosVoidLog;
@@ -165,8 +166,10 @@ class PosController extends Controller
 
                 // Diskon besar wajib disetujui supervisor. Dicek SETELAH subtotal dihitung
                 // dari harga di database (bukan harga kiriman browser).
+                // null = diskon kecil (tidak perlu persetujuan), berisi User = supervisor yang menyetujui.
+                $discountApprovedBy = null;
                 if ($discount > $this->maxDiscountWithoutApproval($subtotal)) {
-                    $this->ensureDiscountIsApprovedBySupervisor($request, $validated);
+                    $discountApprovedBy = $this->ensureDiscountIsApprovedBySupervisor($request, $validated);
                 }
 
                 $tax = (float) ($validated['tax_amount'] ?? 0);
@@ -200,6 +203,22 @@ class PosController extends Controller
                 // 3. Insert transaction items
                 foreach ($itemsToInsert as $item) {
                     $posTransaction->items()->create($item);
+                }
+
+                // 4. Log Aktivitas (di dalam transaksi: jika gagal/rollback, log ikut batal).
+                ActivityLog::record('pos.checkout', "Transaksi kasir {$posTransaction->invoice_number} sebesar ".self::rupiah($totalAmount), $posTransaction, [
+                    'total_amount' => $totalAmount,
+                    'payment_method' => $paymentMethod,
+                    'items_count' => count($itemsToInsert),
+                ]);
+
+                if ($discountApprovedBy !== null) {
+                    ActivityLog::record('pos.discount_approved', 'Diskon '.self::rupiah($discount)." pada {$posTransaction->invoice_number} disetujui oleh {$discountApprovedBy->name}", $posTransaction, [
+                        'subtotal' => $subtotal,
+                        'discount_amount' => $discount,
+                        'approved_by_id' => $discountApprovedBy->id,
+                        'approved_by' => $discountApprovedBy->name,
+                    ]);
                 }
 
                 return $posTransaction->load(['items.product', 'cashier', 'member']);
@@ -321,6 +340,14 @@ class PosController extends Controller
                     'created_at' => Carbon::now(),
                 ]);
 
+                // 8. Log Aktivitas.
+                ActivityLog::record('pos.voided', "VOID transaksi {$lockedTransaction->invoice_number} (".self::rupiah((float) $lockedTransaction->total_amount)."), disetujui {$supervisor->name}", $lockedTransaction, [
+                    'total_amount' => (float) $lockedTransaction->total_amount,
+                    'void_reason' => $validated['void_reason'],
+                    'approved_by_id' => $supervisor->id,
+                    'approved_by' => $supervisor->name,
+                ]);
+
                 return $lockedTransaction;
             });
 
@@ -378,8 +405,9 @@ class PosController extends Controller
      * Exception ini membatalkan (rollback) DB::transaction checkout, termasuk pengurangan stok.
      *
      * @param  array<string, mixed>  $validated
+     * @return User Supervisor yang menyetujui diskon.
      */
-    private function ensureDiscountIsApprovedBySupervisor(Request $request, array $validated): void
+    private function ensureDiscountIsApprovedBySupervisor(Request $request, array $validated): User
     {
         $maxPercent = (float) config('pos.max_discount_percent_without_approval');
 
@@ -395,6 +423,16 @@ class PosController extends Controller
         if ($supervisor instanceof JsonResponse) {
             throw new HttpResponseException($supervisor);
         }
+
+        return $supervisor;
+    }
+
+    /**
+     * Format angka menjadi Rupiah untuk teks log, contoh: 150000 -> "Rp 150.000".
+     */
+    private static function rupiah(float $amount): string
+    {
+        return 'Rp '.number_format($amount, 0, ',', '.');
     }
 
     /**
@@ -431,6 +469,11 @@ class PosController extends Controller
 
         if (! $supervisor) {
             return $this->rejectSupervisorAuthorization($throttleKey, 'Akun Supervisor tidak ditemukan.', 422);
+        }
+
+        // Akun yang dinonaktifkan admin tidak boleh memberi otorisasi (issue #27).
+        if (! $supervisor->is_active) {
+            return $this->rejectSupervisorAuthorization($throttleKey, 'Akun Supervisor ini sudah dinonaktifkan.', 403);
         }
 
         // Permission "pos_void" = izin memberi otorisasi supervisor di kasir (admin & supervisor).

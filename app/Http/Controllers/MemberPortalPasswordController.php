@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateMemberPortalPasswordRequest;
+use App\Models\ActivityLog;
 use App\Models\Member;
 use Illuminate\Http\RedirectResponse;
 
@@ -27,6 +28,8 @@ class MemberPortalPasswordController extends Controller
         $member->setRememberToken(null);
 
         $member->save();
+
+        ActivityLog::record('member.portal_password_set', "Mengatur password portal member {$member->full_name} ({$member->member_code})", $member);
 
         return redirect()->route('members.show', $member)
             ->with('success', "Password portal untuk {$member->full_name} berhasil disimpan.");

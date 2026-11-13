@@ -34,6 +34,7 @@ class RoleAndPermissionSeeder extends Seeder
             'class_enroll',
             'manage_packages', // tambah/ubah/hapus paket & harga (admin, supervisor)
             'manage_products', // tambah/ubah/hapus produk, harga & stok (admin, supervisor)
+            'view_activity_logs', // melihat Log Aktivitas semua staf (HANYA admin, issue #28)
         ];
 
         foreach ($permissions as $permission) {

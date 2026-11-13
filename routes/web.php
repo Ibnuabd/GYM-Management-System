@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AttendanceKioskController;
 use App\Http\Controllers\AttendanceLogController;
 use App\Http\Controllers\AuthController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\PosController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Guest Authentication Routes
@@ -23,7 +25,8 @@ Route::middleware('guest')->group(function () {
 });
 
 // Authenticated Staff Routes
-Route::middleware('auth:web')->group(function () {
+// "user.active": staf yang dinonaktifkan admin langsung dikeluarkan (issue #27)
+Route::middleware(['auth:web', 'user.active'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/', function () {
@@ -108,10 +111,19 @@ Route::middleware('auth:web')->group(function () {
         Route::get('/attendances', [AttendanceLogController::class, 'index'])->name('attendances.index');
     });
 
-    // Manajemen User belum dibuat. Sementara: kembali ke halaman sebelumnya + pop-up informasi.
-    Route::get('/users', function () {
-        return back()->with('info', 'Fitur Manajemen User (RBAC) belum tersedia dan sedang dalam pengembangan.');
-    })->middleware('permission:manage_users')->name('users');
+    // Manajemen User (RBAC): hanya admin. Tidak ada route hapus, user cukup dinonaktifkan.
+    Route::middleware('permission:manage_users')->group(function () {
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::put('/users/{user}/password', [UserController::class, 'updatePassword'])->name('users.password.update');
+        Route::post('/users/{user}/toggle-active', [UserController::class, 'toggleActive'])->name('users.toggle-active');
+    });
+
+    // Log Aktivitas semua staf: hanya admin. Hanya bisa DILIHAT (tidak ada route ubah / hapus).
+    Route::get('/activity-logs', [ActivityLogController::class, 'index'])
+        ->middleware('permission:view_activity_logs')
+        ->name('activity-logs.index');
 });
 
 // Member Self-Service Portal Guest Routes

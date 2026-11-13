@@ -72,10 +72,8 @@ class AuthenticationAndRbacTest extends TestCase
         $this->actingAs($admin)->get('/pt')->assertStatus(200);
         $this->actingAs($admin)->get('/reports')->assertStatus(200);
 
-        // Manajemen User belum dibuat: admin diizinkan, tapi dikembalikan dengan pop-up informasi.
-        $this->actingAs($admin)->from('/dashboard')->get('/users')
-            ->assertRedirect('/dashboard')
-            ->assertSessionHas('info');
+        // Manajemen User (issue #27): hanya admin yang bisa membuka.
+        $this->actingAs($admin)->get('/users')->assertStatus(200);
     }
 
     public function test_supervisor_has_operational_and_report_access_but_forbidden_on_users(): void

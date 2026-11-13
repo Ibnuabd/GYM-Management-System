@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureMemberIsActive;
+use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -30,6 +31,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => RoleOrPermissionMiddleware::class,
             // Keluarkan member yang statusnya bukan "active" dari portal
             'member.active' => EnsureMemberIsActive::class,
+            // Keluarkan staf yang akunnya dinonaktifkan admin (issue #27)
+            'user.active' => EnsureUserIsActive::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

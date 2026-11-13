@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSubscriptionRequest;
+use App\Models\ActivityLog;
 use App\Models\Member;
 use App\Models\MemberSubscription;
 use App\Models\Package;
@@ -59,7 +60,7 @@ class SubscriptionController extends Controller
             $totalSessions = in_array($package->type, ['pt', 'combo']) ? $package->session_count : 0;
             $usedSessions = 0;
 
-            MemberSubscription::create([
+            $subscription = MemberSubscription::create([
                 'member_id' => $member->id,
                 'package_id' => $package->id,
                 'pt_user_id' => in_array($package->type, ['pt', 'combo']) ? ($validated['pt_user_id'] ?? null) : null,
@@ -70,6 +71,14 @@ class SubscriptionController extends Controller
                 'price_paid' => $validated['price_paid'] ?? $package->price,
                 'status' => $status,
                 'notes' => $validated['notes'] ?? null,
+            ]);
+
+            ActivityLog::record('subscription.created', "Menambahkan paket {$package->name} untuk member {$member->full_name}", $subscription, [
+                'package' => $package->name,
+                'price_paid' => (float) $subscription->price_paid,
+                'start_date' => $subscription->start_date->toDateString(),
+                'end_date' => $subscription->end_date->toDateString(),
+                'status' => $status,
             ]);
         });
 
@@ -94,6 +103,13 @@ class SubscriptionController extends Controller
             }
 
             $lockedSubscription->update(['status' => 'cancelled']);
+
+            ActivityLog::record(
+                'subscription.cancelled',
+                "Membatalkan langganan {$lockedSubscription->package->name} milik {$lockedSubscription->member->full_name}",
+                $lockedSubscription,
+                ActivityLog::changesOf($lockedSubscription),
+            );
 
             return null;
         });
@@ -133,6 +149,13 @@ class SubscriptionController extends Controller
                 'end_date' => $endDate->toDateString(),
                 'status' => 'active',
             ]);
+
+            ActivityLog::record(
+                'subscription.activated',
+                "Mengaktifkan langganan {$lockedSubscription->package->name} milik {$lockedSubscription->member->full_name}",
+                $lockedSubscription,
+                ActivityLog::changesOf($lockedSubscription),
+            );
 
             return null;
         });

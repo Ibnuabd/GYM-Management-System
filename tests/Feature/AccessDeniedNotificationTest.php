@@ -50,15 +50,15 @@ class AccessDeniedNotificationTest extends TestCase
         $this->actingAs($this->pt)->getJson(route('reports'))->assertForbidden();
     }
 
-    public function test_user_management_menu_shows_info_popup_instead_of_json(): void
+    public function test_user_management_menu_shows_error_popup_for_non_admin_instead_of_json(): void
     {
-        $response = $this->actingAs($this->admin)
+        $response = $this->actingAs($this->pt)
             ->from(route('dashboard'))
             ->withHeaders($this->inertiaHeaders())
-            ->get(route('users'));
+            ->get(route('users.index'));
 
         $response->assertRedirect(route('dashboard'));
-        $response->assertSessionHas('info');
+        $response->assertSessionHas('error', 'Anda tidak memiliki akses ke halaman tersebut.');
         $this->assertStringNotContainsString('application/json', (string) $response->headers->get('Content-Type'));
     }
 

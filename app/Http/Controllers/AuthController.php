@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\EnsureUserIsActive;
+use App\Models\ActivityLog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -60,15 +62,37 @@ class AuthController extends Controller
         if (! Auth::attempt($credentials, $request->boolean('remember'))) {
             RateLimiter::hit($throttleKey, self::LOCKOUT_SECONDS);
 
+            // Log Aktivitas: login gagal (user_id kosong, karena belum tentu akun yang terdaftar).
+            ActivityLog::record('auth.login_failed', "Login gagal untuk email {$credentials['email']}", null, [
+                'email' => $credentials['email'],
+            ]);
+
             throw ValidationException::withMessages([
                 'email' => __('Kredensial yang dimasukkan tidak cocok dengan catatan kami.'),
             ]);
         }
 
-        // Langkah 3: login berhasil, hitungan gagal di-reset ke 0.
+        // Langkah 3: password benar, tapi akun yang dinonaktifkan admin tetap ditolak.
+        if (! Auth::user()->is_active) {
+            $inactiveUser = Auth::user();
+            Auth::guard('web')->logout();
+
+            ActivityLog::record('auth.login_failed', "Login ditolak: akun {$credentials['email']} dinonaktifkan", $inactiveUser, [
+                'email' => $credentials['email'],
+                'reason' => 'inactive',
+            ]);
+
+            throw ValidationException::withMessages([
+                'email' => EnsureUserIsActive::INACTIVE_MESSAGE,
+            ]);
+        }
+
+        // Langkah 4: login berhasil, hitungan gagal di-reset ke 0.
         RateLimiter::clear($throttleKey);
 
         $request->session()->regenerate();
+
+        ActivityLog::record('auth.login', 'Login ke sistem');
 
         return redirect()->intended(route('dashboard'));
     }
@@ -78,6 +102,9 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
+        // Dicatat SEBELUM logout, supaya pelakunya masih diketahui.
+        ActivityLog::record('auth.logout', 'Logout dari sistem');
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

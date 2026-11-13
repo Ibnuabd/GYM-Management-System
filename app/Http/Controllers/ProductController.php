@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -65,6 +66,11 @@ class ProductController extends Controller
 
         $product = Product::create($validated);
 
+        ActivityLog::record('product.created', "Menambahkan produk {$product->name} ({$product->barcode})", $product, [
+            'selling_price' => (float) $product->selling_price,
+            'stock' => $product->stock,
+        ]);
+
         if ($request->wantsJson()) {
             return response()->json([
                 'success' => true,
@@ -95,6 +101,8 @@ class ProductController extends Controller
 
         $product->update($validated);
 
+        ActivityLog::record('product.updated', "Mengubah produk {$product->name} ({$product->barcode})", $product, ActivityLog::changesOf($product));
+
         if ($request->wantsJson()) {
             return response()->json([
                 'success' => true,
@@ -114,10 +122,14 @@ class ProductController extends Controller
         if ($product->transactionItems()->exists()) {
             $product->update(['is_active' => false]);
             $msg = "Produk '{$product->name}' telah dinonaktifkan karena memiliki riwayat transaksi.";
+
+            ActivityLog::record('product.deactivated', "Menonaktifkan produk {$product->name} (punya riwayat transaksi)", $product);
         } else {
             $name = $product->name;
             $product->delete();
             $msg = "Produk '{$name}' berhasil dihapus.";
+
+            ActivityLog::record('product.deleted', "Menghapus produk {$name}", $product, ['name' => $name, 'barcode' => $product->barcode]);
         }
 
         if (request()->wantsJson()) {

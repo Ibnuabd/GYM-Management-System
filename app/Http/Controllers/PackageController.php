@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Package;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -39,7 +40,13 @@ class PackageController extends Controller
             'is_active' => ['boolean'],
         ]);
 
-        Package::create($validated);
+        $package = Package::create($validated);
+
+        ActivityLog::record('package.created', "Membuat paket {$package->name}", $package, [
+            'type' => $package->type,
+            'price' => (float) $package->price,
+            'duration_days' => $package->duration_days,
+        ]);
 
         return redirect()->route('packages.index')
             ->with('success', "Paket {$validated['name']} berhasil dibuat!");
@@ -62,6 +69,8 @@ class PackageController extends Controller
 
         $package->update($validated);
 
+        ActivityLog::record('package.updated', "Mengubah paket {$package->name}", $package, ActivityLog::changesOf($package));
+
         return redirect()->route('packages.index')
             ->with('success', "Paket {$package->name} berhasil diperbarui.");
     }
@@ -80,12 +89,16 @@ class PackageController extends Controller
         if ($package->subscriptions()->exists()) {
             $package->update(['is_active' => false]);
 
+            ActivityLog::record('package.deactivated', "Menonaktifkan paket {$name} (punya riwayat langganan)", $package);
+
             return redirect()->route('packages.index')
                 ->with('success', "Paket {$name} telah dinonaktifkan (tidak dihapus) karena memiliki riwayat langganan member.");
         }
 
         // Paket belum pernah dipakai sama sekali, jadi aman dihapus permanen.
         $package->delete();
+
+        ActivityLog::record('package.deleted', "Menghapus paket {$name}", $package, ['name' => $name]);
 
         return redirect()->route('packages.index')
             ->with('success', "Paket {$name} berhasil dihapus.");
